@@ -16,6 +16,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_150415) do
 
   create_table "documents", force: :cascade do |t|
     t.uuid "content_id", null: false
+    t.integer "stale_lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["content_id"], name: "index_documents_on_content_id", unique: true
@@ -26,6 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_150415) do
     t.text "description"
     t.text "base_path"
     t.string "state", null: false
+    t.integer "user_facing_version", default: 1, null: false
     t.string "content_store"
     t.string "publishing_app"
     t.string "rendering_app"
@@ -44,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_150415) do
     t.index ["base_path", "content_store"], name: "index_editions_on_base_path_and_content_store", unique: true
     t.index ["document_id", "content_store"], name: "index_editions_on_document_id_and_content_store", unique: true
     t.index ["document_id", "state"], name: "index_editions_on_document_id_and_state"
+    t.index ["document_id", "user_facing_version"], name: "index_editions_on_document_id_and_user_facing_version", unique: true
     t.index ["document_id"], name: "index_editions_on_document_id"
     t.index ["document_type", "state"], name: "index_editions_on_document_type_and_state"
     t.index ["document_type", "updated_at"], name: "index_editions_on_document_type_and_updated_at"
