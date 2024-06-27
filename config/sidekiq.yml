@@ -1,0 +1,6 @@
+---
+:verbose: false
+:concurrency: 12
+:queues:
+  - downstream
+  - default

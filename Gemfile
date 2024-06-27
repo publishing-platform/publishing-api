@@ -6,6 +6,7 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.3"
 
 gem "bootsnap", require: false
 gem "pg", "~> 1.1"
+gem "publishing_platform_sidekiq"
 gem "publishing_platform_sso"
 gem "puma", ">= 5.0"
 gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
