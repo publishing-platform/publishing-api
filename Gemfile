@@ -9,14 +9,13 @@ gem "pg", "~> 1.1"
 gem "publishing_platform_sidekiq"
 gem "publishing_platform_sso"
 gem "puma", ">= 5.0"
-gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
+gem "tzinfo-data", platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
+  gem "debug", platforms: %i[mri mswin mswin64 mingw x64_mingw]
   gem "publishing_platform_rubocop"
 end
 
 group :development do
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
 end
-
