@@ -3,9 +3,10 @@ Rails.application.routes.draw do
   def content_id_constraint(request)
     UuidValidator.valid?(request.params[:content_id])
   end
-  
+
   scope format: false do
     scope constraints: method(:content_id_constraint) do
+      put "/content/:content_id", to: "content_items#put_content"
       get "/content/:content_id", to: "content_items#show"
     end
   end

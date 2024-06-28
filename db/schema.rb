@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_27_150415) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_150415) do
     t.index ["state", "base_path"], name: "index_editions_on_state_and_base_path"
     t.index ["updated_at", "id"], name: "index_editions_on_updated_at_and_id"
     t.index ["updated_at"], name: "index_editions_on_updated_at"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.uuid "content_id"
+    t.string "action", null: false
+    t.string "user_uid"
+    t.string "request_id"
+    t.jsonb "payload", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "path_reservations", force: :cascade do |t|
+    t.text "base_path", null: false
+    t.string "publishing_app", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["base_path"], name: "index_path_reservations_on_base_path", unique: true
   end
 
   create_table "users", force: :cascade do |t|
