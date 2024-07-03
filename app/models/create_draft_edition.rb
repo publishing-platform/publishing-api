@@ -38,13 +38,13 @@ private
 
   def fill_out_new_edition
     document.increment!(:stale_lock_version)
-    # set_document_owner
+    set_document_owner
   end
 
-  # def set_document_owner
-  #   owner_id = put_content.options[:owning_document_id]
-  #   edition.document.update!(owning_document_id: owner_id) if owner_id
-  # end
+  def set_document_owner
+    owner_id = put_content.options[:owning_document_id]
+    edition.document.update!(owning_document_id: owner_id) if owner_id
+  end
 
   def edition_attributes_from_payload
     payload.slice(*Edition::TOP_LEVEL_FIELDS)
