@@ -17,9 +17,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
   create_table "documents", force: :cascade do |t|
     t.uuid "content_id", null: false
     t.integer "stale_lock_version", default: 0, null: false
+    t.bigint "owning_document_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["content_id"], name: "index_documents_on_content_id", unique: true
+    t.index ["owning_document_id"], name: "index_documents_on_owning_document_id"
   end
 
   create_table "editions", force: :cascade do |t|
@@ -88,5 +90,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "documents", "documents", column: "owning_document_id", on_delete: :restrict
   add_foreign_key "editions", "documents", on_delete: :restrict
 end
