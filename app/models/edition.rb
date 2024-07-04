@@ -10,6 +10,9 @@ class Edition < ApplicationRecord
     document_type
     first_published_at
     last_edited_at
+    major_published_at
+    phase    
+    public_updated_at    
     published_at
     publishing_app
     redirects
@@ -19,6 +22,7 @@ class Edition < ApplicationRecord
     state
     title
     user_facing_version
+    update_type
   ].freeze  
 
   enum content_store: {
@@ -28,6 +32,7 @@ class Edition < ApplicationRecord
 
   belongs_to :document
   has_one :change_note
+  has_many :links, dependent: :delete_all
 
   validates :document, presence: true
 
