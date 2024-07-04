@@ -55,7 +55,7 @@ private
     # create_redirect
     ChangeNote.create_from_edition(payload, edition)
     # create_links(edition)
-    # Action.create_put_content_action(edition, document.locale, event)
+    Action.create_put_content_action(edition, event)
   end  
 
   def create_or_update_edition

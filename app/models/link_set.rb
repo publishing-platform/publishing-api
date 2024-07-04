@@ -1,0 +1,2 @@
+class LinkSet < ApplicationRecord
+end

@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_01_092342) do
+ActiveRecord::Schema[7.1].define(version: 202407011112122) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "actions", force: :cascade do |t|
+    t.uuid "content_id", null: false
+    t.string "action", null: false
+    t.uuid "user_uid"
+    t.integer "edition_id"
+    t.integer "link_set_id"
+    t.integer "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "change_notes", force: :cascade do |t|
     t.text "note", default: ""
