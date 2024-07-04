@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 202407011112122) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_03_200159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,7 +31,7 @@ ActiveRecord::Schema[7.1].define(version: 202407011112122) do
     t.bigint "edition_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["edition_id"], name: "index_change_notes_on_edition_id"
+    t.index ["edition_id"], name: "index_change_notes_on_edition_id", unique: true
   end
 
   create_table "documents", force: :cascade do |t|
@@ -94,12 +94,71 @@ ActiveRecord::Schema[7.1].define(version: 202407011112122) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "expanded_links", force: :cascade do |t|
+    t.uuid "content_id", null: false
+    t.boolean "with_drafts", null: false
+    t.bigint "payload_version", default: 0, null: false
+    t.jsonb "expanded_links", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_id", "with_drafts"], name: "expanded_links_content_id_with_drafts_index", unique: true
+  end
+
+  create_table "link_changes", force: :cascade do |t|
+    t.uuid "source_content_id", null: false
+    t.uuid "target_content_id", null: false
+    t.string "link_type", null: false
+    t.integer "change", null: false
+    t.bigint "action_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action_id"], name: "index_link_changes_on_action_id"
+    t.index ["created_at"], name: "index_link_changes_on_created_at", order: :desc
+  end
+
+  create_table "link_sets", force: :cascade do |t|
+    t.uuid "content_id"
+    t.integer "stale_lock_version", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_id"], name: "index_link_sets_on_content_id", unique: true
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.uuid "target_content_id"
+    t.string "link_type", null: false
+    t.integer "position", default: 0, null: false
+    t.bigint "edition_id"
+    t.bigint "link_set_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["edition_id"], name: "index_links_on_edition_id"
+    t.index ["link_set_id", "target_content_id"], name: "index_links_on_link_set_id_and_target_content_id"
+    t.index ["link_set_id"], name: "index_links_on_link_set_id"
+    t.index ["link_type"], name: "index_links_on_link_type"
+    t.index ["target_content_id", "link_type"], name: "index_links_on_target_content_id_and_link_type"
+    t.index ["target_content_id"], name: "index_links_on_target_content_id"
+  end
+
   create_table "path_reservations", force: :cascade do |t|
     t.text "base_path", null: false
     t.string "publishing_app", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["base_path"], name: "index_path_reservations_on_base_path", unique: true
+  end
+
+  create_table "unpublishings", force: :cascade do |t|
+    t.string "type", null: false
+    t.text "explanation"
+    t.text "alternative_path"
+    t.datetime "unpublished_at", precision: nil
+    t.jsonb "redirects"
+    t.bigint "edition_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["edition_id", "type"], name: "index_unpublishings_on_edition_id_and_type"
+    t.index ["edition_id"], name: "index_unpublishings_on_edition_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -118,4 +177,8 @@ ActiveRecord::Schema[7.1].define(version: 202407011112122) do
   add_foreign_key "change_notes", "editions", on_delete: :restrict
   add_foreign_key "documents", "documents", column: "owning_document_id", on_delete: :restrict
   add_foreign_key "editions", "documents", on_delete: :restrict
+  add_foreign_key "link_changes", "actions", on_delete: :cascade
+  add_foreign_key "links", "editions", on_delete: :cascade
+  add_foreign_key "links", "link_sets", on_delete: :restrict
+  add_foreign_key "unpublishings", "editions", on_delete: :cascade
 end

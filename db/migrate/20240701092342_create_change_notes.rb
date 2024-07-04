@@ -4,7 +4,7 @@ class CreateChangeNotes < ActiveRecord::Migration[7.1]
       t.text :note, default: ""
       t.datetime :public_timestamp, precision: nil
 
-      t.references :edition, null: false, foreign_key: { on_delete: :restrict }
+      t.references :edition, null: false, foreign_key: { on_delete: :restrict }, index: { unique: true }
 
       t.timestamps    
     end
