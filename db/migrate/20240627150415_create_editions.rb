@@ -1,11 +1,14 @@
 class CreateEditions < ActiveRecord::Migration[7.1]
   def change
     create_table :editions do |t|
-      t.text :title
+      t.text :title      
       t.text :description
       t.text :base_path
       t.string :state, null: false  
       t.integer :user_facing_version, default: 1, null: false
+      t.datetime :public_updated_at, precision: nil
+      t.string :update_type
+      t.string :phase, default: "live"
       t.string :content_store
       t.string :publishing_app
       t.string :rendering_app      
@@ -14,6 +17,8 @@ class CreateEditions < ActiveRecord::Migration[7.1]
       t.datetime :first_published_at, precision: nil
       t.datetime :published_at, precision: nil        
       t.datetime :last_edited_at, precision: nil  
+      t.string :publishing_request_id
+      t.datetime :major_published_at, precision: nil
       t.string :auth_bypass_ids, default: [], null: false, array: true  
       t.jsonb :details, default: {}                
       t.jsonb :routes, default: []

@@ -4,6 +4,8 @@ class PutContent < BaseCommand
     reserve_current_path
     edition = create_or_update_edition
 
+    update_content_dependencies(edition)
+
     after_transaction_commit do
       # TODO
       puts "after committed - send downstream"
@@ -47,6 +49,13 @@ private
     return unless payload[:base_path]
 
     PathReservation.reserve_base_path!(payload[:base_path], payload[:publishing_app])
+  end  
+
+  def update_content_dependencies(edition)
+    # create_redirect
+    ChangeNote.create_from_edition(payload, edition)
+    # create_links(edition)
+    # Action.create_put_content_action(edition, document.locale, event)
   end  
 
   def create_or_update_edition

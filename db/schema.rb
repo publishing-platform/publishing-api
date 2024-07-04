@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_01_092342) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "change_notes", force: :cascade do |t|
+    t.text "note", default: ""
+    t.datetime "public_timestamp", precision: nil
+    t.bigint "edition_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["edition_id"], name: "index_change_notes_on_edition_id"
+  end
 
   create_table "documents", force: :cascade do |t|
     t.uuid "content_id", null: false
@@ -30,6 +39,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
     t.text "base_path"
     t.string "state", null: false
     t.integer "user_facing_version", default: 1, null: false
+    t.datetime "public_updated_at", precision: nil
+    t.string "update_type"
+    t.string "phase", default: "live"
     t.string "content_store"
     t.string "publishing_app"
     t.string "rendering_app"
@@ -38,6 +50,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
     t.datetime "first_published_at", precision: nil
     t.datetime "published_at", precision: nil
     t.datetime "last_edited_at", precision: nil
+    t.string "publishing_request_id"
+    t.datetime "major_published_at", precision: nil
     t.string "auth_bypass_ids", default: [], null: false, array: true
     t.jsonb "details", default: {}
     t.jsonb "routes", default: []
@@ -90,6 +104,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_28_111510) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "change_notes", "editions", on_delete: :restrict
   add_foreign_key "documents", "documents", column: "owning_document_id", on_delete: :restrict
   add_foreign_key "editions", "documents", on_delete: :restrict
 end

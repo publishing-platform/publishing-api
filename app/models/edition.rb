@@ -27,6 +27,9 @@ class Edition < ApplicationRecord
   }
 
   belongs_to :document
+  has_one :change_note
 
   validates :document, presence: true
+
+  scope :with_change_note, -> { left_outer_joins(:change_note) }
 end
