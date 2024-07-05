@@ -6,7 +6,7 @@ class CreateChangeNotes < ActiveRecord::Migration[7.1]
 
       t.references :edition, null: false, foreign_key: { on_delete: :restrict }, index: { unique: true }
 
-      t.timestamps    
+      t.timestamps
     end
   end
 end

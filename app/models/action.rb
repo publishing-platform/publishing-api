@@ -37,8 +37,8 @@ class Action < ApplicationRecord
     )
   end
 
-  def self.create_patch_link_set_action(link_set, before_links, event)
-    action = create!(
+  def self.create_patch_link_set_action(link_set, _before_links, event)
+    create!(
       content_id: link_set.content_id,
       locale: nil,
       action: "PatchLinkSet",

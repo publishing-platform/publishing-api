@@ -40,7 +40,7 @@ private
     # PutContent controller. This allows users to delete links simply by not
     # including them in the payload.
     edition.links.delete_all
-    
+
     edition.save!
     [edition, old_edition]
   end

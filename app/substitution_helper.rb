@@ -33,10 +33,9 @@ module SubstitutionHelper
     end
   end
 
-
 private
 
-  def discard_draft(blocking_edition, downstream, nested, callbacks)
+  def discard_draft(_blocking_edition, _downstream, _nested, _callbacks)
     # TODO
     # Commands::V2::DiscardDraft.call(
     #   {
@@ -46,7 +45,7 @@ private
     #   nested:,
     #   callbacks:,
     # )
-    puts "** called DiscardDraft **"
+    Rails.logger.debug "** called DiscardDraft **"
   end
 
   def blocking_editions(base_path, state, new_item_content_id, new_item_document_type)

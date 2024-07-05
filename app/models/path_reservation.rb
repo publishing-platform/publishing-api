@@ -9,7 +9,7 @@ class PathReservation < ApplicationRecord
     else
       existing.ensure_unique(publishing_app)
     end
-  end  
+  end
 
   def self.create_path_reservation(base_path, publishing_app)
     ActiveRecord::Base.transaction(requires_new: true) do
@@ -18,7 +18,7 @@ class PathReservation < ApplicationRecord
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     # If a path is already reserved by the same publishing app, ignore the error
     find_by(base_path:).ensure_unique(publishing_app)
-  end  
+  end
 
   def ensure_unique(publishing_app)
     if already_associated_with?(publishing_app)
@@ -36,5 +36,5 @@ class PathReservation < ApplicationRecord
     msg = "#{base_path} is already reserved by #{publishing_app}"
     errors.add(:base_path, msg)
     ActiveRecord::RecordInvalid.new(self)
-  end  
+  end
 end

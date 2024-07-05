@@ -8,7 +8,7 @@ class CreateDocuments < ActiveRecord::Migration[7.1]
 
       t.timestamps
 
-      t.index :content_id, unique: true      
+      t.index :content_id, unique: true
     end
   end
 end

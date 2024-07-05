@@ -41,7 +41,7 @@ private
   end
 
   def link_type_is_valid
-    if !link_type.match(VALID_LINK_TYPE_REGEX)
+    unless link_type.match(VALID_LINK_TYPE_REGEX)
       errors.add(:link, "Invalid link type: #{link_type}")
     end
   end

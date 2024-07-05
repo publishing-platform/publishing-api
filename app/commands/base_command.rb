@@ -6,10 +6,10 @@ class BaseCommand
       new(
         payload,
         event:,
-        downstream:, 
+        downstream:,
         callbacks:,
         nested:,
-        **options        
+        **options,
       ).call
     end
 
@@ -17,9 +17,8 @@ class BaseCommand
     execute_callbacks(callbacks) unless nested
 
     response
-
   rescue ActiveRecord::RecordInvalid => e
-    raise_validation_command_error(e)    
+    raise_validation_command_error(e)
   end
 
   def initialize(payload, event:, callbacks:, downstream: true, nested: false, **options)
@@ -29,7 +28,7 @@ class BaseCommand
     @nested = nested
     @callbacks = callbacks
     @options = options
-  end  
+  end
 
 private
 
@@ -37,7 +36,7 @@ private
 
   def after_transaction_commit(&block)
     callbacks << block
-  end  
+  end
 
   def self.execute_callbacks(callbacks)
     callbacks.each(&:call)
@@ -58,7 +57,7 @@ private
         },
       },
     )
-  end  
+  end
   private_class_method :execute_callbacks, :raise_validation_command_error
 
   def check_version_and_raise_if_conflicting(current_versioned_item, previous_version)
@@ -82,7 +81,7 @@ private
     end
 
     current_version
-  end  
+  end
 
   def raise_command_error(code, message, fields, friendly_message: nil)
     raise CommandError.new(
@@ -95,5 +94,5 @@ private
         }.merge(fields),
       },
     )
-  end  
+  end
 end

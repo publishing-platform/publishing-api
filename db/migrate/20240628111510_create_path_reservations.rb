@@ -6,7 +6,7 @@ class CreatePathReservations < ActiveRecord::Migration[7.1]
 
       t.timestamps
 
-      t.index :base_path, unique: true        
+      t.index :base_path, unique: true
     end
   end
 end

@@ -11,8 +11,8 @@ class Edition < ApplicationRecord
     first_published_at
     last_edited_at
     major_published_at
-    phase    
-    public_updated_at    
+    phase
+    public_updated_at
     published_at
     publishing_app
     redirects
@@ -23,7 +23,7 @@ class Edition < ApplicationRecord
     title
     user_facing_version
     update_type
-  ].freeze  
+  ].freeze
 
   enum content_store: {
     draft: "draft",
@@ -35,9 +35,9 @@ class Edition < ApplicationRecord
   has_many :links, dependent: :delete_all
 
   scope :with_document, -> { joins(:document) }
-  scope :with_change_note, -> { left_outer_joins(:change_note) }  
+  scope :with_change_note, -> { left_outer_joins(:change_note) }
 
-  # TODO - more validation
+  # TODO: - more validation
   validates :document, presence: true
 
   delegate :content_id, to: :document
@@ -65,7 +65,7 @@ class Edition < ApplicationRecord
         unpublished_at:,
       )
     end
-  end  
+  end
 
   def substitute
     unpublish(
@@ -76,5 +76,5 @@ class Edition < ApplicationRecord
 
   def unpublished?
     state == "unpublished" && unpublishing.present?
-  end  
+  end
 end

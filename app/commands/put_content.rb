@@ -10,18 +10,18 @@ class PutContent < BaseCommand
     after_transaction_commit do
       # TODO
       puts "after committed - send downstream"
-    end  
-    
+    end
+
     # TODO
-    # Success.new(present_response(edition))  
-    Success.new({})  
+    # Success.new(present_response(edition))
+    Success.new({})
   end
 
   def document
     @document ||= Document.find_or_create_locked(
-      content_id: payload.fetch(:content_id)
+      content_id: payload.fetch(:content_id),
     )
-  end  
+  end
 
 private
 
@@ -33,7 +33,7 @@ private
     @previously_published_edition ||= PreviouslyPublishedItem.new(
       document, payload[:base_path], self
     ).call
-  end  
+  end
 
   def remove_previous_path_reservations
     to_discard = previous_drafted_edition&.base_path
@@ -50,14 +50,14 @@ private
     return unless payload[:base_path]
 
     PathReservation.reserve_base_path!(payload[:base_path], payload[:publishing_app])
-  end  
+  end
 
   def update_content_dependencies(edition)
     create_redirect
     ChangeNote.create_from_edition(payload, edition)
     create_links(edition)
     Action.create_put_content_action(edition, event)
-  end  
+  end
 
   def create_links(edition)
     return if payload[:links].nil?
@@ -69,8 +69,8 @@ private
         end,
       )
     end
-  end 
-  
+  end
+
   def create_redirect
     return unless payload[:base_path]
 
@@ -79,7 +79,7 @@ private
       payload,
       callbacks,
     ).call
-  end  
+  end
 
   def create_or_update_edition
     if previous_drafted_edition
@@ -92,7 +92,7 @@ private
       new_draft_edition = CreateDraftEdition.new(self, payload, previously_published_edition).call
     end
     @edition = updated_item || new_draft_edition
-  end  
+  end
 
   def clear_draft_items_of_same_base_path
     return unless payload[:base_path]
@@ -106,5 +106,5 @@ private
       callbacks:,
       nested: true,
     )
-  end  
+  end
 end
