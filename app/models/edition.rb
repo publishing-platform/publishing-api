@@ -52,7 +52,7 @@ class Edition < ApplicationRecord
         content_id:,
       ),
     )
-  end  
+  end
 
   def unpublish(type:, explanation: nil, alternative_path: nil, redirects: nil, unpublished_at: nil)
     content_store = type == "substitute" ? nil : "live"
@@ -126,5 +126,5 @@ class Edition < ApplicationRecord
     return unless base_path
 
     PublishingPlatformLocation.website_root + base_path
-  end  
+  end
 end

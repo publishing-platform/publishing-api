@@ -10,7 +10,7 @@ class PutContent < BaseCommand
     orphaned_links = link_diff_between(
       @links_before_update,
       edition.links.map(&:target_content_id),
-    )    
+    )
 
     after_transaction_commit do
       send_downstream(
@@ -119,14 +119,10 @@ private
 
   def edition_diff
     @edition_diff ||= LinkExpansion::EditionDiff.new(@edition, previous_edition: @previous_edition)
-  end  
+  end
 
   def send_downstream(content_id, orphaned_links)
     return unless downstream
-    puts "** sending downstream **"
-    puts "content_id: #{content_id}"
-    puts "orphaned_links: #{orphaned_links}"
-    puts "edition_diff present?: #{edition_diff.present?}"
 
     DownstreamDraftWorker.perform_async(
       "content_id" => content_id,
@@ -135,5 +131,5 @@ private
       "source_command" => "put_content",
       "source_fields" => edition_diff.has_previous_edition? ? edition_diff.fields.map(&:to_s) : [],
     )
-  end  
+  end
 end

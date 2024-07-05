@@ -18,11 +18,11 @@ class DownstreamDraftWorker
       args.first.fetch("orphaned_content_ids", []),
       name,
     ]
-  end 
-  
+  end
+
   def perform(args = {})
     # Do something
     logger.info "DownstreamDraftWorker executing..."
     logger.debug { "args: #{args.inspect}" }
-  end  
+  end
 end
