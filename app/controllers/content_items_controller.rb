@@ -4,7 +4,7 @@ class ContentItemsController < ApplicationController
   end
 
   def put_content
-    response = PutContent.call(edition)
+    response = Commands::PutContent.call(edition)
     render status: response.code, json: response
   end
 

@@ -147,6 +147,8 @@ GEM
       rack (>= 1.2, < 4)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
+    oj (3.16.4)
+      bigdecimal (>= 3.0)
     omniauth (2.1.2)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -306,6 +308,7 @@ DEPENDENCIES
   bootsnap
   debug
   error_highlight (>= 0.4.0)
+  oj
   pg (~> 1.1)
   publishing_platform_location
   publishing_platform_rubocop

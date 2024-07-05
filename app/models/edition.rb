@@ -31,10 +31,12 @@ class Edition < ApplicationRecord
   }
 
   belongs_to :document
+  has_one :unpublishing
   has_one :change_note
   has_many :links, dependent: :delete_all
 
   scope :with_document, -> { joins(:document) }
+  scope :with_unpublishing, -> { left_outer_joins(:unpublishing) }
   scope :with_change_note, -> { left_outer_joins(:change_note) }
 
   # TODO: - more validation

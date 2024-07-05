@@ -37,8 +37,7 @@ class PreviouslyPublishedItem
     previous_base_path != base_path
   end
 
-  # TODO
-  # delegate :links, to: :previously_published_item
+  delegate :links, to: :previously_published_item
 
   class NoPreviousPublishedItem
     def user_facing_version
