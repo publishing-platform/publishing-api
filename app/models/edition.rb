@@ -34,7 +34,47 @@ class Edition < ApplicationRecord
   has_one :change_note
   has_many :links, dependent: :delete_all
 
+  scope :with_document, -> { joins(:document) }
+  scope :with_change_note, -> { left_outer_joins(:change_note) }  
+
+  # TODO - more validation
   validates :document, presence: true
 
-  scope :with_change_note, -> { left_outer_joins(:change_note) }
+  delegate :content_id, to: :document
+
+  def unpublish(type:, explanation: nil, alternative_path: nil, redirects: nil, unpublished_at: nil)
+    content_store = type == "substitute" ? nil : "live"
+    update!(state: "unpublished", content_store:)
+
+    if unpublishing.present?
+      unpublishing.update!(
+        type:,
+        explanation:,
+        alternative_path:,
+        redirects:,
+        unpublished_at:,
+      )
+      unpublishing
+    else
+      Unpublishing.create!(
+        edition: self,
+        type:,
+        explanation:,
+        alternative_path:,
+        redirects:,
+        unpublished_at:,
+      )
+    end
+  end  
+
+  def substitute
+    unpublish(
+      type: "substitute",
+      explanation: "Automatically unpublished to make way for another document",
+    )
+  end
+
+  def unpublished?
+    state == "unpublished" && unpublishing.present?
+  end  
 end

@@ -2,8 +2,7 @@ class PutContent < BaseCommand
   def call
     remove_previous_path_reservations
     reserve_current_path
-    # TODO
-    # clear_draft_items_of_same_base_path
+    clear_draft_items_of_same_base_path
     edition = create_or_update_edition
 
     update_content_dependencies(edition)
@@ -54,7 +53,7 @@ private
   end  
 
   def update_content_dependencies(edition)
-    # create_redirect
+    create_redirect
     ChangeNote.create_from_edition(payload, edition)
     create_links(edition)
     Action.create_put_content_action(edition, event)
@@ -70,6 +69,16 @@ private
         end,
       )
     end
+  end 
+  
+  def create_redirect
+    return unless payload[:base_path]
+
+    RedirectService.new(
+      previously_published_edition,
+      payload,
+      callbacks,
+    ).call
   end  
 
   def create_or_update_edition
@@ -85,19 +94,17 @@ private
     @edition = updated_item || new_draft_edition
   end  
 
-  # TODO
-  # def clear_draft_items_of_same_base_path
-  #   return unless payload[:base_path]
+  def clear_draft_items_of_same_base_path
+    return unless payload[:base_path]
 
-  #   SubstitutionHelper.clear!(
-  #     new_item_document_type: payload[:document_type],
-  #     new_item_content_id: document.content_id,
-  #     state: "draft",
-  #     locale: document.locale,
-  #     base_path: payload[:base_path],
-  #     downstream:,
-  #     callbacks:,
-  #     nested: true,
-  #   )
-  # end  
+    SubstitutionHelper.clear!(
+      new_item_document_type: payload[:document_type],
+      new_item_content_id: document.content_id,
+      state: "draft",
+      base_path: payload[:base_path],
+      downstream:,
+      callbacks:,
+      nested: true,
+    )
+  end  
 end
