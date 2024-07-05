@@ -11,7 +11,7 @@ class PutContent < BaseCommand
       @links_before_update,
       edition.links.map(&:target_content_id),
     )    
-    
+
     after_transaction_commit do
       send_downstream(
         document.content_id,
@@ -128,15 +128,12 @@ private
     puts "orphaned_links: #{orphaned_links}"
     puts "edition_diff present?: #{edition_diff.present?}"
 
-    # TODO
-    # DownstreamDraftWorker.perform_async_in_queue(
-    #   DownstreamDraftWorker::QUEUE,
-    #   "content_id" => content_id,
-    #   "locale" => locale,
-    #   "update_dependencies" => edition_diff.present?, # has the information that would be presented on documents linking to this document changed?
-    #   "orphaned_content_ids" => orphaned_links,
-    #   "source_command" => "put_content",
-    #   "source_fields" => edition_diff.has_previous_edition? ? edition_diff.fields.map(&:to_s) : [],
-    # )
+    DownstreamDraftWorker.perform_async(
+      "content_id" => content_id,
+      "update_dependencies" => edition_diff.present?, # has the information that would be presented on documents linking to this document changed?
+      "orphaned_content_ids" => orphaned_links,
+      "source_command" => "put_content",
+      "source_fields" => edition_diff.has_previous_edition? ? edition_diff.fields.map(&:to_s) : [],
+    )
   end  
 end
