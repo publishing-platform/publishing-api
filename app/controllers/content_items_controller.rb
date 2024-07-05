@@ -4,7 +4,6 @@ class ContentItemsController < ApplicationController
   end
 
   def put_content
-    Rails.logger.debug Edition.column_defaults
     response = PutContent.call(edition)
     render status: response.code, json: response
   end

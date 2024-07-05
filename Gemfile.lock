@@ -298,6 +298,7 @@ DEPENDENCIES
   debug
   error_highlight (>= 0.4.0)
   pg (~> 1.1)
+  publishing_platform_location
   publishing_platform_rubocop
   publishing_platform_sidekiq
   publishing_platform_sso

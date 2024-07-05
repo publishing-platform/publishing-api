@@ -42,6 +42,18 @@ class Edition < ApplicationRecord
 
   delegate :content_id, to: :document
 
+  def to_h
+    SymbolizeJson.symbolize(
+      attributes.merge(
+        api_path:,
+        api_url:,
+        web_url:,
+        withdrawn: withdrawn?,
+        content_id:,
+      ),
+    )
+  end  
+
   def unpublish(type:, explanation: nil, alternative_path: nil, redirects: nil, unpublished_at: nil)
     content_store = type == "substitute" ? nil : "live"
     update!(state: "unpublished", content_store:)
@@ -77,4 +89,42 @@ class Edition < ApplicationRecord
   def unpublished?
     state == "unpublished" && unpublishing.present?
   end
+
+  def gone?
+    (unpublished? && unpublishing.gone?) || document_type == "gone"
+  end
+
+  def redirect?
+    (unpublished? && unpublishing.redirect?) || document_type == "redirect"
+  end
+
+  def withdrawn?
+    unpublished? && unpublishing.withdrawal?
+  end
+
+  def substitute?
+    unpublished? && unpublishing.substitute?
+  end
+
+  def draft?
+    content_store == "draft"
+  end
+
+  def api_path
+    return unless base_path
+
+    "/api/content#{base_path}"
+  end
+
+  def api_url
+    return unless api_path
+
+    PublishingPlatformLocation.website_root + api_path
+  end
+
+  def web_url
+    return unless base_path
+
+    PublishingPlatformLocation.website_root + base_path
+  end  
 end

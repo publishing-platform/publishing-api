@@ -7,9 +7,16 @@ class PutContent < BaseCommand
 
     update_content_dependencies(edition)
 
+    orphaned_links = link_diff_between(
+      @links_before_update,
+      edition.links.map(&:target_content_id),
+    )    
+    
     after_transaction_commit do
-      # TODO
-      puts "after committed - send downstream"
+      send_downstream(
+        document.content_id,
+        orphaned_links,
+      )
     end
 
     # TODO
@@ -24,6 +31,10 @@ class PutContent < BaseCommand
   end
 
 private
+
+  def link_diff_between(old_links, new_links)
+    old_links - new_links
+  end
 
   def previous_drafted_edition
     document.draft
@@ -83,12 +94,10 @@ private
 
   def create_or_update_edition
     if previous_drafted_edition
-      # TODO
-      # @links_before_update = previous_drafted_edition.links.map(&:target_content_id)
+      @links_before_update = previous_drafted_edition.links.map(&:target_content_id)
       updated_item, @previous_edition = UpdateExistingDraftEdition.new(previous_drafted_edition, self, payload).call
     else
-      # TODO
-      # @links_before_update = previously_published_edition.links.map(&:target_content_id)
+      @links_before_update = previously_published_edition.links.map(&:target_content_id)
       new_draft_edition = CreateDraftEdition.new(self, payload, previously_published_edition).call
     end
     @edition = updated_item || new_draft_edition
@@ -107,4 +116,27 @@ private
       nested: true,
     )
   end
+
+  def edition_diff
+    @edition_diff ||= LinkExpansion::EditionDiff.new(@edition, previous_edition: @previous_edition)
+  end  
+
+  def send_downstream(content_id, orphaned_links)
+    return unless downstream
+    puts "** sending downstream **"
+    puts "content_id: #{content_id}"
+    puts "orphaned_links: #{orphaned_links}"
+    puts "edition_diff present?: #{edition_diff.present?}"
+
+    # TODO
+    # DownstreamDraftWorker.perform_async_in_queue(
+    #   DownstreamDraftWorker::QUEUE,
+    #   "content_id" => content_id,
+    #   "locale" => locale,
+    #   "update_dependencies" => edition_diff.present?, # has the information that would be presented on documents linking to this document changed?
+    #   "orphaned_content_ids" => orphaned_links,
+    #   "source_command" => "put_content",
+    #   "source_fields" => edition_diff.has_previous_edition? ? edition_diff.fields.map(&:to_s) : [],
+    # )
+  end  
 end
