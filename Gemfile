@@ -7,6 +7,7 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.3"
 gem "bootsnap", require: false
 gem "oj"
 gem "pg", "~> 1.1"
+gem "publishing_platform_app_config"
 gem "publishing_platform_location"
 gem "publishing_platform_sidekiq"
 gem "publishing_platform_sso"

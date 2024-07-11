@@ -4,6 +4,8 @@ module Commands
       remove_previous_path_reservations
       reserve_current_path
       clear_draft_items_of_same_base_path
+      check_update_type
+
       edition = create_or_update_edition
 
       update_content_dependencies(edition)
@@ -30,6 +32,16 @@ module Commands
     end
 
   private
+
+    def check_update_type
+      return if payload[:update_type].present?
+
+      PublishingPlatformError.notify(
+        "#{payload[:publishing_app]} sent put content without providing an update_type",
+        level: "warning",
+        extra: payload.slice(:publishing_app, :content_id),
+      )
+    end  
 
     def link_diff_between(old_links, new_links)
       old_links - new_links
