@@ -41,7 +41,7 @@ module Commands
         level: "warning",
         extra: payload.slice(:publishing_app, :content_id),
       )
-    end  
+    end
 
     def link_diff_between(old_links, new_links)
       old_links - new_links
@@ -108,7 +108,7 @@ module Commands
         edition,
         include_warnings: true,
       )
-    end  
+    end
 
     def create_or_update_edition
       if previous_drafted_edition

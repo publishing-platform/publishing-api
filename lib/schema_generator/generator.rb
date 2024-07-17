@@ -29,7 +29,6 @@ module SchemaGenerator
         # ).generate
         # Schema.write("content_schemas/dist/formats/#{schema_name}/publisher/links.json", publisher_links_schema)
       end
-
     rescue InvalidFormat => e
       raise "Could not generate #{schema_name} as the format file is invalid. #{e.message}"
     rescue DefinitionsResolver::UnresolvedDefinition => e

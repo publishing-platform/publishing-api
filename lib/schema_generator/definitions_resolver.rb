@@ -8,7 +8,7 @@ module SchemaGenerator
     end
 
     def call
-      definitions_from_properties = extract_definitions(properties)    
+      definitions_from_properties = extract_definitions(properties)
       definitions_with_dependencies = resolve_depenencies(
         definitions_from_properties, definitions_from_properties
       )
