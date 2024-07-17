@@ -181,6 +181,8 @@ GEM
       rubocop-rails (= 2.24.1)
       rubocop-rake (= 0.6.0)
       rubocop-rspec (= 2.29.2)
+    publishing_platform_schemas (0.1.0)
+      json-schema (>= 2.8, < 4.4)
     publishing_platform_sidekiq (0.2.0)
       redis (< 5)
       redis-namespace (~> 1.6)
@@ -335,6 +337,7 @@ DEPENDENCIES
   publishing_platform_app_config
   publishing_platform_location
   publishing_platform_rubocop
+  publishing_platform_schemas
   publishing_platform_sidekiq
   publishing_platform_sso
   puma (>= 5.0)

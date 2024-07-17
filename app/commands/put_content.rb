@@ -1,6 +1,8 @@
 module Commands
   class PutContent < BaseCommand
     def call
+      PutContentValidator.new(payload, self).validate
+      
       remove_previous_path_reservations
       reserve_current_path
       clear_draft_items_of_same_base_path
