@@ -1,19 +1,4 @@
-{
-  details: {
-    "$ref": "#/definitions/details",
-  },
-  phase: {
-    description: "The service design phase of this content item",
-    type: "string",
-    enum: [
-      "alpha",
-      "beta",
-      "live",
-    ],
-  },
-  publishing_app: {
-    "$ref": "#/definitions/publishing_app_name",
-  },
+(import "all.jsonnet") + {
   auth_bypass_ids: {
     description: "A list of ids that will allow access to this item for non-authenticated users",
     "$ref": "#/definitions/guid_list",

@@ -1,5 +1,5 @@
-# require "schema_generator/generator"
-# require "jsonnet"
+require "schema_generator/generator"
+require "jsonnet"
 
 desc "Regenerate schemas"
 task regenerate_schemas: :environment do

@@ -10,5 +10,5 @@
   details: "required",
   definitions: {},
   edition_links: import "base_edition_links.jsonnet",
-  # links: import "base_links.jsonnet",
+  links: import "base_links.jsonnet",
 }

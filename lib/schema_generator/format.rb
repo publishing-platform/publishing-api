@@ -99,6 +99,12 @@ module SchemaGenerator
       generate_publisher.nil? ? true : generate_publisher
     end
 
+    def generate_frontend?
+      generate = format_data.dig("generate", "frontend")
+      generate = true if generate.nil?
+      generate && !base_path.forbidden?
+    end    
+
     def definitions
       format_data["definitions"] || {}
     end
@@ -107,9 +113,9 @@ module SchemaGenerator
       @edition_links ||= create_edition_links
     end
 
-    # def content_links
-    #   @content_links ||= create_content_links
-    # end
+    def content_links
+      @content_links ||= create_content_links
+    end
 
     def schema_name_definition
       {
@@ -132,15 +138,15 @@ module SchemaGenerator
       Links.new(links_data)
     end
 
-    # def create_content_links
-    #   links_data = format_data.fetch("links", {})
-    #   links = Links.new(links_data)
-    #   if links.required_links.any?
-    #     raise InvalidFormat, "Can only require edition links"
-    #   end
+    def create_content_links
+      links_data = format_data.fetch("links", {})
+      links = Links.new(links_data)
+      if links.required_links.any?
+        raise InvalidFormat, "Can only require edition links"
+      end
 
-    #   links
-    # end
+      links
+    end
 
     class DocumentType
       attr_reader :document_types
@@ -248,6 +254,8 @@ module SchemaGenerator
 
     class Links
       ALLOWED_KEYS = %w[description required minItems maxItems].freeze
+      LINKS_WITHOUT_BASE_PATHS = %w[
+      ].freeze      
 
       attr_reader :links
 
@@ -268,6 +276,19 @@ module SchemaGenerator
           memo << k if v["required"]
         end
       end
+
+      def frontend_properties
+        links.each_with_object({}) do |(k, v), hash|
+          # It's possible for all link types to contain items without base_paths
+          # however apps aren't coded for this so fail on this, therefore
+          # this legacy fix is included.
+          # @FIXME remove need for this check
+          definition = LINKS_WITHOUT_BASE_PATHS.include?(k) ? "frontend_links" : "frontend_links_with_base_path"
+          link = v.merge("$ref" => "#/definitions/#{definition}")
+            .delete_if { |field| %w[required minItems].include?(field) }
+          hash[k] = link
+        end
+      end      
 
     private
 

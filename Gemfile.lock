@@ -75,6 +75,8 @@ GEM
       minitest (>= 5.1)
       mutex_m
       tzinfo (~> 2.0)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.2)
     base64 (0.2.0)
     bigdecimal (3.1.8)
@@ -108,6 +110,8 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.7.2)
+    json-schema (4.3.1)
+      addressable (>= 2.8)
     jsonnet (0.5.3)
       mini_portile2 (>= 2.2.0)
     jwt (2.8.2)
@@ -166,6 +170,7 @@ GEM
     pg (1.5.6)
     psych (5.1.2)
       stringio
+    public_suffix (6.0.0)
     publishing_platform_app_config (0.1.0)
       sentry-rails (~> 5.3)
       sentry-ruby (~> 5.3)
@@ -323,6 +328,7 @@ DEPENDENCIES
   bootsnap
   debug
   error_highlight (>= 0.4.0)
+  json-schema
   jsonnet
   oj
   pg (~> 1.1)
