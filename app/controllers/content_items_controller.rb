@@ -8,6 +8,11 @@ class ContentItemsController < ApplicationController
     render status: response.code, json: response
   end
 
+  def publish
+    response = Commands::Publish.call(edition)
+    render status: response.code, json: response
+  end  
+
 private
 
   def edition

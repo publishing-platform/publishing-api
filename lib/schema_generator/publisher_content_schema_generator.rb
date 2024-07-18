@@ -25,6 +25,7 @@ module SchemaGenerator
         document_type
         publishing_app
         schema_name
+        update_type
       ] + format.publisher_required
       fields.sort
     end
@@ -48,7 +49,7 @@ module SchemaGenerator
         "rendering_app" => format.rendering_app.definition,
         "routes" => format.routes.definition,
         "schema_name" => format.schema_name_definition,
-        "title" => format.title.definition,
+        "title" => format.title.definition
       }
     end
 

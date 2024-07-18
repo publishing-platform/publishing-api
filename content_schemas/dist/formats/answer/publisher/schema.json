@@ -9,7 +9,8 @@
     "rendering_app",
     "routes",
     "schema_name",
-    "title"
+    "title",
+    "update_type"
   ],
   "additionalProperties": false,
   "properties": {

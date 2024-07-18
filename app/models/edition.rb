@@ -39,8 +39,13 @@ class Edition < ApplicationRecord
   scope :with_unpublishing, -> { left_outer_joins(:unpublishing) }
   scope :with_change_note, -> { left_outer_joins(:change_note) }
 
-  # TODO: - more validation
+  # TODO: - more validation (of all models)
   validates :document, presence: true
+
+  validates :schema_name, presence: true
+  validates :document_type, presence: true  
+  validates :publishing_app, presence: true
+  validates :update_type, presence: true
 
   delegate :content_id, to: :document
 
@@ -55,6 +60,18 @@ class Edition < ApplicationRecord
       ),
     )
   end
+
+  def pathless?
+    !base_path
+  end  
+
+  def publish
+    update!(state: "published", content_store: "live")
+  end
+
+  def supersede
+    update!(state: "superseded", content_store: nil)
+  end  
 
   def unpublish(type:, explanation: nil, alternative_path: nil, redirects: nil, unpublished_at: nil)
     content_store = type == "substitute" ? nil : "live"

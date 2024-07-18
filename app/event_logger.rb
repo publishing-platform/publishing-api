@@ -7,9 +7,8 @@ module EventLogger
         content_id: payload[:content_id],
         action: command_class.name,
         payload:,
-        # TODO
-        # user_uid: GdsApi::GovukHeaders.headers[:x_govuk_authenticated_user],
-        # request_id: GdsApi::GovukHeaders.headers[:govuk_request_id],
+        user_uid: PublishingPlatformApi::PublishingPlatformHeaders.headers[:x_publishing_platform_authenticated_user],
+        request_id: PublishingPlatformApi::PublishingPlatformHeaders.headers[:publishing_platform_request_id],
       )
       response = yield(event) if block_given?
     end

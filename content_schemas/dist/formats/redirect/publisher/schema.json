@@ -6,7 +6,8 @@
     "document_type",
     "publishing_app",
     "redirects",
-    "schema_name"
+    "schema_name",
+    "update_type"
   ],
   "additionalProperties": false,
   "properties": {
