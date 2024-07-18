@@ -113,6 +113,27 @@
         }
       ]
     },
+    "change_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "public_timestamp",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "description": "A summary of the change",
+            "type": "string"
+          },
+          "public_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
     "description_optional": {
       "anyOf": [
         {
@@ -129,6 +150,9 @@
       "properties": {
         "body": {
           "$ref": "#/definitions/body_html_and_govspeak"
+        },
+        "change_history": {
+          "$ref": "#/definitions/change_history"
         }
       }
     },
