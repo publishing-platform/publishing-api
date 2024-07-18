@@ -13,6 +13,11 @@ class ContentItemsController < ApplicationController
     render status: response.code, json: response
   end  
 
+  def unpublish
+    response = Commands::Unpublish.call(edition)
+    render status: response.code, json: response
+  end  
+
   def discard_draft
     response = Commands::DiscardDraft.call(edition)
     render status: response.code, json: response
