@@ -145,22 +145,17 @@ module Commands
     def send_downstream
       return unless downstream
 
-      queue = edition.update_type == "republish" ? DownstreamLiveWorker::LOW_QUEUE : DownstreamLiveWorker::HIGH_QUEUE
-
-      DownstreamDraftWorker.perform_async_in_queue(
-        queue,
+      DownstreamDraftWorker.perform_async(
         worker_params,
       )
 
-      DownstreamLiveWorker.perform_async_in_queue(
-        queue,
+      DownstreamLiveWorker.perform_async(
         live_worker_params,
       )
     end
 
     def live_worker_params
       worker_params.merge(
-        "message_queue_event_type" => edition.update_type,
         "orphaned_content_ids" => orphaned_content_ids,
       )
     end
@@ -168,7 +163,6 @@ module Commands
     def worker_params
       {
         "content_id" => content_id,
-        "locale" => locale,
         "update_dependencies" => edition_diff.present?,
         "source_command" => "publish",
         "source_fields" => edition_diff.has_previous_edition? ? edition_diff.fields.map(&:to_s) : [],
