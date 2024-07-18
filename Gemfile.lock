@@ -181,7 +181,7 @@ GEM
     psych (5.1.2)
       stringio
     public_suffix (6.0.0)
-    publishing_platform_api_adapters (0.2.0)
+    publishing_platform_api_adapters (0.3.0)
       addressable
       link_header
       null_logger
@@ -355,7 +355,7 @@ DEPENDENCIES
   jsonnet
   oj
   pg (~> 1.1)
-  publishing_platform_api_adapters
+  publishing_platform_api_adapters (= 0.3.0)
   publishing_platform_app_config
   publishing_platform_location
   publishing_platform_rubocop
