@@ -119,7 +119,7 @@ module Commands
       )
     end
 
-    def publish_redirect(previous_base_path, locale)
+    def publish_redirect(previous_base_path)
       draft_redirect = Edition.with_document.find_by(
         state: "draft",
         base_path: previous_base_path,
