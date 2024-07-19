@@ -49,7 +49,7 @@ module SchemaGenerator
         "rendering_app" => format.rendering_app.definition,
         "routes" => format.routes.definition,
         "schema_name" => format.schema_name_definition,
-        "title" => format.title.definition
+        "title" => format.title.definition,
       }
     end
 

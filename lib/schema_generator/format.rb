@@ -103,7 +103,7 @@ module SchemaGenerator
       generate = format_data.dig("generate", "frontend")
       generate = true if generate.nil?
       generate && !base_path.forbidden?
-    end    
+    end
 
     def definitions
       format_data["definitions"] || {}
@@ -254,8 +254,7 @@ module SchemaGenerator
 
     class Links
       ALLOWED_KEYS = %w[description required minItems maxItems].freeze
-      LINKS_WITHOUT_BASE_PATHS = %w[
-      ].freeze      
+      LINKS_WITHOUT_BASE_PATHS = %w[].freeze
 
       attr_reader :links
 
@@ -288,7 +287,7 @@ module SchemaGenerator
             .delete_if { |field| %w[required minItems].include?(field) }
           hash[k] = link
         end
-      end      
+      end
 
     private
 

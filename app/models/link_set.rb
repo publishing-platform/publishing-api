@@ -24,5 +24,5 @@ class LinkSet < ApplicationRecord
     links_set = links.map { |link| ComparableLink.new(link) }.to_set
     other_links_set = other_links.map { |link| ComparableLink.new(link) }.to_set
     links_set != other_links_set
-  end  
+  end
 end

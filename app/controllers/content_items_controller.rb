@@ -11,17 +11,17 @@ class ContentItemsController < ApplicationController
   def publish
     response = Commands::Publish.call(edition)
     render status: response.code, json: response
-  end  
+  end
 
   def unpublish
     response = Commands::Unpublish.call(edition)
     render status: response.code, json: response
-  end  
+  end
 
   def discard_draft
     response = Commands::DiscardDraft.call(edition)
     render status: response.code, json: response
-  end  
+  end
 
 private
 

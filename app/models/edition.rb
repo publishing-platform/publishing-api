@@ -47,7 +47,7 @@ class Edition < ApplicationRecord
   validates :document, presence: true
 
   validates :schema_name, presence: true
-  validates :document_type, presence: true  
+  validates :document_type, presence: true
   validates :publishing_app, presence: true
   validates :update_type, presence: true
   validates :title, presence: true, if: :renderable_content?
@@ -57,22 +57,22 @@ class Edition < ApplicationRecord
             inclusion: {
               in: %w[alpha beta live],
               message: "must be either alpha, beta, or live",
-            }  
+            }
 
-  validates :details, well_formed_content_types: { must_include_one_of: %w[text/html text/markdown] }            
+  validates :details, well_formed_content_types: { must_include_one_of: %w[text/html text/markdown] }
 
-  validate :auth_bypass_ids_are_uuids  
-  validates :base_path, absolute_path: true, if: :base_path_present?  
+  validate :auth_bypass_ids_are_uuids
+  validates :base_path, absolute_path: true, if: :base_path_present?
 
-  validate :user_facing_version_must_increase  
+  validate :user_facing_version_must_increase
   validate :draft_cannot_be_behind_live
 
-  validates :routes, absence: true, if: ->(edition) { edition.schema_name == "redirect" }  
+  validates :routes, absence: true, if: ->(edition) { edition.schema_name == "redirect" }
 
   validates_with VersionForDocumentValidator
   validates_with BasePathForStateValidator
   validates_with StateForDocumentValidator
-  validates_with RoutesAndRedirectsValidator  
+  validates_with RoutesAndRedirectsValidator
 
   delegate :content_id, to: :document
   delegate :present?, to: :base_path, prefix: true # base_path_present?
@@ -93,7 +93,7 @@ class Edition < ApplicationRecord
     unless auth_bypass_ids.all? { |id| UuidValidator.valid?(id) }
       errors.add(:auth_bypass_ids, ["contains invalid UUIDs"])
     end
-  end  
+  end
 
   def user_facing_version_must_increase
     return unless persisted?
@@ -102,7 +102,7 @@ class Edition < ApplicationRecord
     mismatch = "(#{user_facing_version} <= #{user_facing_version_was})"
     message = "cannot be less than or equal to the previous user_facing_version #{mismatch}"
     errors.add(:user_facing_version, message)
-  end  
+  end
 
   def draft_cannot_be_behind_live
     return unless document
@@ -124,11 +124,11 @@ class Edition < ApplicationRecord
       message = "draft edition cannot be behind the published/unpublished edition #{mismatch}"
       errors.add(:user_facing_version, message)
     end
-  end  
+  end
 
   def pathless?
     !base_path
-  end  
+  end
 
   def publish
     update!(state: "published", content_store: "live")
@@ -136,7 +136,7 @@ class Edition < ApplicationRecord
 
   def supersede
     update!(state: "superseded", content_store: nil)
-  end  
+  end
 
   def unpublish(type:, explanation: nil, alternative_path: nil, redirects: nil, unpublished_at: nil)
     content_store = type == "substitute" ? nil : "live"
@@ -212,13 +212,13 @@ class Edition < ApplicationRecord
     PublishingPlatformLocation.website_root + base_path
   end
 
-private  
+private
 
   def renderable_content?
     NON_RENDERABLE_FORMATS.exclude?(document_type)
-  end  
+  end
 
   def requires_rendering_app?
     renderable_content? && NO_RENDERING_APP_FORMATS.exclude?(document_type)
-  end  
+  end
 end

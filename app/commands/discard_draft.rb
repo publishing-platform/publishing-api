@@ -42,7 +42,7 @@ module Commands
         "update_dependencies" => true,
         "source_command" => "discard_draft",
         "source_document_type" => @document_type,
-      )    
+      )
     end
 
     def delete_supporting_objects

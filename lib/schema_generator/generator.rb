@@ -33,7 +33,7 @@ module SchemaGenerator
           format, global_definitions
         ).generate
         Schema.write("content_schemas/dist/formats/#{schema_name}/frontend/schema.json", frontend_schema)
-      end      
+      end
     rescue InvalidFormat => e
       raise "Could not generate #{schema_name} as the format file is invalid. #{e.message}"
     rescue DefinitionsResolver::UnresolvedDefinition => e

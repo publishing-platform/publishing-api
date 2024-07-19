@@ -25,7 +25,7 @@ class PreviouslyPublishedItem
 
   delegate :last_edited_at, to: :previously_published_item
 
-  delegate :major_published_at, to: :previously_published_item  
+  delegate :major_published_at, to: :previously_published_item
 
   delegate :public_updated_at, to: :previously_published_item
 
@@ -62,7 +62,7 @@ class PreviouslyPublishedItem
 
     def first_published_at; end
 
-    def major_published_at; end    
+    def major_published_at; end
 
     def public_updated_at; end
   end

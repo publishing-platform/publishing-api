@@ -81,7 +81,7 @@ module Commands
 
     def document
       @document ||= Document.find_or_create_locked(
-        content_id: payload[:content_id]
+        content_id: payload[:content_id],
       )
     end
 
@@ -106,7 +106,7 @@ module Commands
         downstream:,
         callbacks:,
         nested: true,
-      )    
+      )
     end
 
     def set_timestamps

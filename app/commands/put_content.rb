@@ -37,7 +37,7 @@ module Commands
 
     def set_timestamps(edition)
       Edition::Timestamps.edited(edition, payload, previously_published_edition)
-    end 
+    end
 
     def link_diff_between(old_links, new_links)
       old_links - new_links
