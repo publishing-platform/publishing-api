@@ -18,11 +18,10 @@ class Unpublishing < ApplicationRecord
   validates :explanation, presence: true, if: :withdrawal?
   validates :redirects, presence: true, if: :redirect?
 
-  # TODO
-  # validate if: :redirect? do
-  #   RoutesAndRedirectsValidator.new
-  #     .validate(self, base_path: edition.base_path)
-  # end
+  validate if: :redirect? do
+    RoutesAndRedirectsValidator.new
+      .validate(self, base_path: edition.base_path)
+  end
 
   def gone?
     type == "gone"

@@ -1,14 +1,6 @@
 class RoutesAndRedirectsValidator < ActiveModel::Validator
   EXTERNAL_HOST_ALLOW_LIST = %w[
-    caa.co.uk
-    gov.uk
-    independent-inquiry.uk
-    judiciary.uk
-    moneyhelper.org.uk
-    nationalhighways.co.uk
-    nhs.uk
-    police.uk
-    ukri.org
+    publishing-platform.co.uk
   ].freeze
 
   def validate(record, base_path: nil)
@@ -173,7 +165,7 @@ private
       destination.starts_with?("/")
     end
 
-    def government_domain?(host)
+    def allowed_domain?(host)
       return true if EXTERNAL_HOST_ALLOW_LIST.include?(host)
 
       host_allow_list_for_subdomains = EXTERNAL_HOST_ALLOW_LIST.map { |allowed_host| ".#{allowed_host}" }
@@ -201,10 +193,10 @@ private
       end
 
       errors.add(:redirects, "external redirects only accepted for the domains #{EXTERNAL_HOST_ALLOW_LIST.to_sentence} (#{destination})") unless
-        government_domain?(uri.host)
+        allowed_domain?(uri.host)
 
       errors.add(:redirects, "internal redirect should not be specified with full url (#{destination})") if
-        %w[gov.uk www.gov.uk].include? uri.host
+        %w[publishing-platform.co.uk www.publishing-platform.co.uk].include? uri.host
 
       errors.add(:redirects, "external redirects must use https (#{destination})") unless uri.scheme == "https"
 

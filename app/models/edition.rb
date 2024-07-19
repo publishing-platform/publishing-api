@@ -25,6 +25,9 @@ class Edition < ApplicationRecord
     update_type
   ].freeze
 
+  NON_RENDERABLE_FORMATS = %w[redirect gone].freeze
+  NO_RENDERING_APP_FORMATS = %w[].freeze
+
   enum content_store: {
     draft: "draft",
     live: "live",
@@ -35,6 +38,7 @@ class Edition < ApplicationRecord
   has_one :change_note
   has_many :links, dependent: :delete_all
 
+  scope :renderable_content, -> { where.not(document_type: NON_RENDERABLE_FORMATS) }
   scope :with_document, -> { joins(:document) }
   scope :with_unpublishing, -> { left_outer_joins(:unpublishing) }
   scope :with_change_note, -> { left_outer_joins(:change_note) }
@@ -46,8 +50,32 @@ class Edition < ApplicationRecord
   validates :document_type, presence: true  
   validates :publishing_app, presence: true
   validates :update_type, presence: true
+  validates :title, presence: true, if: :renderable_content?
+  validates :rendering_app, presence: true, dns_hostname: true, if: :requires_rendering_app?
+
+  validates :phase,
+            inclusion: {
+              in: %w[alpha beta live],
+              message: "must be either alpha, beta, or live",
+            }  
+
+  validates :details, well_formed_content_types: { must_include_one_of: %w[text/html text/markdown] }            
+
+  validate :auth_bypass_ids_are_uuids  
+  validates :base_path, absolute_path: true, if: :base_path_present?  
+
+  validate :user_facing_version_must_increase  
+  validate :draft_cannot_be_behind_live
+
+  validates :routes, absence: true, if: ->(edition) { edition.schema_name == "redirect" }  
+
+  validates_with VersionForDocumentValidator
+  validates_with BasePathForStateValidator
+  validates_with StateForDocumentValidator
+  validates_with RoutesAndRedirectsValidator  
 
   delegate :content_id, to: :document
+  delegate :present?, to: :base_path, prefix: true # base_path_present?
 
   def to_h
     SymbolizeJson.symbolize(
@@ -60,6 +88,43 @@ class Edition < ApplicationRecord
       ),
     )
   end
+
+  def auth_bypass_ids_are_uuids
+    unless auth_bypass_ids.all? { |id| UuidValidator.valid?(id) }
+      errors.add(:auth_bypass_ids, ["contains invalid UUIDs"])
+    end
+  end  
+
+  def user_facing_version_must_increase
+    return unless persisted?
+    return unless user_facing_version_changed? && user_facing_version <= user_facing_version_was
+
+    mismatch = "(#{user_facing_version} <= #{user_facing_version_was})"
+    message = "cannot be less than or equal to the previous user_facing_version #{mismatch}"
+    errors.add(:user_facing_version, message)
+  end  
+
+  def draft_cannot_be_behind_live
+    return unless document
+
+    if draft?
+      draft_version = user_facing_version
+      published_unpublished_version = document.published_or_unpublished.try(:user_facing_version)
+    end
+
+    if %w[published unpublished].include?(state)
+      draft_version = document.draft.user_facing_version if document.draft
+      published_unpublished_version = user_facing_version
+    end
+
+    return unless draft_version && published_unpublished_version
+
+    if draft_version < published_unpublished_version
+      mismatch = "(#{draft_version} < #{published_unpublished_version})"
+      message = "draft edition cannot be behind the published/unpublished edition #{mismatch}"
+      errors.add(:user_facing_version, message)
+    end
+  end  
 
   def pathless?
     !base_path
@@ -146,4 +211,14 @@ class Edition < ApplicationRecord
 
     PublishingPlatformLocation.website_root + base_path
   end
+
+private  
+
+  def renderable_content?
+    NON_RENDERABLE_FORMATS.exclude?(document_type)
+  end  
+
+  def requires_rendering_app?
+    renderable_content? && NO_RENDERING_APP_FORMATS.exclude?(document_type)
+  end  
 end
