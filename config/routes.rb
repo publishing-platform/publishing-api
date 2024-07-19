@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   end
 
   scope format: false do
+    get "/content", to: "content_items#index"
     scope constraints: method(:content_id_constraint) do
       put "/content/:content_id", to: "content_items#put_content"
       get "/content/:content_id", to: "content_items#show"

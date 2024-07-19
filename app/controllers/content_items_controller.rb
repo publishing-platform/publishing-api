@@ -1,6 +1,25 @@
 class ContentItemsController < ApplicationController
+  def index
+    pagination = Pagination.new(query_params)
+
+    results = Queries::GetContentCollection.new(
+      document_types:,
+      fields: query_params[:fields],
+      filters:,
+      pagination:,
+      search_query: query_params.fetch("q", ""),
+      search_in: query_params[:search_in],
+    )
+
+    render json: Presenters::ResultsPresenter.new(results, pagination, request.original_url).present
+  end
+
   def show
-    render json: { hello: "world" }
+    render json: Queries::GetContent.call(
+      path_params[:content_id],
+      version: query_params[:version],
+      include_warnings: true,
+    )
   end
 
   def put_content
@@ -28,4 +47,32 @@ private
   def edition
     payload.merge(content_id: path_params[:content_id])
   end
+
+  def publishing_app
+    query_params[:publishing_app]
+  end
+
+  def states
+    query_params[:states]
+  end
+
+  def document_types
+    query_params[:document_type] || query_params[:content_format] || []
+  end
+
+  def filters
+    {
+      publishing_app:,
+      links: link_filters,
+      states: Array(states),
+    }
+  end
+
+  def link_filters
+    {}.tap do |hash|
+      query_params.each do |k, v|
+        hash[k[5..]] = v if k.start_with?("link_")
+      end
+    end
+  end  
 end
