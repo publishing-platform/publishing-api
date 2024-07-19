@@ -13,6 +13,8 @@ Rails.application.routes.draw do
       post "/content/:content_id/unpublish", to: "content_items#unpublish"
       post "/content/:content_id/discard-draft", to: "content_items#discard_draft"
     end
+
+    get "/linkables", to: "content_items#linkables"    
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

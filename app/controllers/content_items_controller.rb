@@ -14,6 +14,12 @@ class ContentItemsController < ApplicationController
     render json: Presenters::ResultsPresenter.new(results, pagination, request.original_url).present
   end
 
+  def linkables
+    render json: Queries::GetLinkables.new(
+      document_type: query_params.fetch(:document_type),
+    ).call
+  end  
+
   def show
     render json: Queries::GetContent.call(
       path_params[:content_id],
