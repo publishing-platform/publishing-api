@@ -74,5 +74,5 @@ private
         hash[k[5..]] = v if k.start_with?("link_")
       end
     end
-  end  
+  end
 end
