@@ -43,7 +43,6 @@ class Edition < ApplicationRecord
   scope :with_unpublishing, -> { left_outer_joins(:unpublishing) }
   scope :with_change_note, -> { left_outer_joins(:change_note) }
 
-  # TODO: - more validation (of all models)
   validates :document, presence: true
 
   validates :schema_name, presence: true
