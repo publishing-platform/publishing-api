@@ -38,6 +38,11 @@ class ContentItemsController < ApplicationController
     render status: response.code, json: response
   end
 
+  def republish
+    response = Commands::Republish.call(edition)
+    render status: response.code, json: response
+  end  
+
   def unpublish
     response = Commands::Unpublish.call(edition)
     render status: response.code, json: response
