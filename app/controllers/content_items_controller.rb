@@ -18,7 +18,7 @@ class ContentItemsController < ApplicationController
     render json: Queries::GetLinkables.new(
       document_type: query_params.fetch(:document_type),
     ).call
-  end  
+  end
 
   def show
     render json: Queries::GetContent.call(
@@ -41,7 +41,7 @@ class ContentItemsController < ApplicationController
   def republish
     response = Commands::Republish.call(edition)
     render status: response.code, json: response
-  end  
+  end
 
   def unpublish
     response = Commands::Unpublish.call(edition)

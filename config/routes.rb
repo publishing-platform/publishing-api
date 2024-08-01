@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   scope format: false do
     put "/paths(/*base_path)", to: "path_reservations#reserve_path"
     delete "/paths(/*base_path)", to: "path_reservations#unreserve_path"
-    
+
     get "/content", to: "content_items#index"
     scope constraints: method(:content_id_constraint) do
       put "/content/:content_id", to: "content_items#put_content"
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       get "/links/:content_id", to: "link_sets#get_links"
     end
 
-    get "/linkables", to: "content_items#linkables"    
+    get "/linkables", to: "content_items#linkables"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

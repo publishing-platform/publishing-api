@@ -39,7 +39,7 @@ private
     )
 
     respond_with_command_error(error)
-  end  
+  end
 
   def respond_with_command_error(error)
     error = error.cause unless error.is_a?(CommandError)
@@ -48,7 +48,7 @@ private
 
   def base_path
     "/#{params[:base_path]}"
-  end  
+  end
 
   def payload
     @payload ||= JSON.parse(request.body.read).deep_symbolize_keys
