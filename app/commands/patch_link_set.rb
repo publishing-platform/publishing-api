@@ -83,16 +83,16 @@ module Commands
       params = worker_params.merge(
         {
           "orphaned_content_ids" => orphaned_content_ids,
-          "update_dependencies" => update_dependencies,          
-        }
+          "update_dependencies" => update_dependencies,
+        },
       )
 
       if document.draft || document.live
         DownstreamDraftWorker.perform_async(params)
       end
 
-      if document.live       
-        DownstreamLiveWorker.perform_async(params)  
+      if document.live
+        DownstreamLiveWorker.perform_async(params)
       end
     end
 

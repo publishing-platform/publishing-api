@@ -6,7 +6,7 @@ class LinkSetsController < ApplicationController
   def patch_links
     response = Commands::PatchLinkSet.call(links_params)
     render status: response.code, json: response
-  end  
+  end
 
 private
 
