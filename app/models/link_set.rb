@@ -1,4 +1,6 @@
 class LinkSet < ApplicationRecord
+  include FindOrCreateLocked
+  
   belongs_to :document, foreign_key: "content_id", primary_key: "content_id"
   has_many :links, -> { order(link_type: :asc, position: :asc) }, dependent: :destroy
 

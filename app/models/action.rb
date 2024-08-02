@@ -37,19 +37,17 @@ class Action < ApplicationRecord
     )
   end
 
-  def self.create_patch_link_set_action(link_set, _before_links, event)
-    create!(
+  def self.create_patch_link_set_action(link_set, before_links, event)
+    action = create!(
       content_id: link_set.content_id,
-      locale: nil,
       action: "PatchLinkSet",
       user_uid: event.user_uid,
       link_set:,
       event:,
     )
 
-    # TODO
-    # after_links = link_set.links.to_a
-    # LinkChangeService.new(action, before_links, after_links).record
+    after_links = link_set.links.to_a
+    LinkChangeService.new(action, before_links, after_links).record
   end
 
 private
