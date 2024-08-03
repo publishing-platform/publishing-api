@@ -2,38 +2,36 @@ class CommandError < StandardError
   attr_reader :code, :error_details
 
   def self.with_error_handling(ignore_404s: false, &block)
-    # TODO
-    #   block.call
-    # rescue GdsApi::HTTPServerError => e
-    #   should_suppress = PublishingAPI.swallow_connection_errors && e.code == 502
-    #   raise CommandError.new(code: e.code, message: e.message) unless should_suppress
-    # rescue GdsApi::HTTPClientError => e
-    #   return if e.code == 404 && ignore_404s
+      block.call
+    rescue PublishingPlatformApi::HTTPServerError => e
+      should_suppress = PublishingApi.swallow_connection_errors && e.code == 502
+      raise CommandError.new(code: e.code, message: e.message) unless should_suppress
+    rescue PublishingPlatformApi::HTTPClientError => e
+      return if e.code == 404 && ignore_404s
 
-    #   # ignore payload_version conflicts
-    #   if e.code == 409 && e.message =~ /transmitted_at|payload_version/
-    #     Rails.logger.debug e.message
-    #     PublishingAPI.service(:statsd).increment("payload_version_conflicts")
-    #     return
-    #   end
+      # ignore payload_version conflicts
+      if e.code == 409 && e.message =~ /transmitted_at|payload_version/
+        Rails.logger.debug e.message
+        return
+      end
 
-    #   fields = if e.error_details.present?
-    #              e.error_details.fetch("errors", {})
-    #            else
-    #              {}
-    #            end
-    #   raise CommandError.new(
-    #     code: e.code,
-    #     error_details: {
-    #       error: {
-    #         code: e.code,
-    #         message: e.message,
-    #         fields:,
-    #       },
-    #     },
-    #   )
-    # rescue GdsApi::BaseError => e
-    #   raise CommandError.new(code: 500, message: "Unexpected error from the downstream application: #{e.message}")
+      fields = if e.error_details.present?
+                 e.error_details.fetch("errors", {})
+               else
+                 {}
+               end
+      raise CommandError.new(
+        code: e.code,
+        error_details: {
+          error: {
+            code: e.code,
+            message: e.message,
+            fields:,
+          },
+        },
+      )
+    rescue PublishingPlatformApi::BaseError => e
+      raise CommandError.new(code: 500, message: "Unexpected error from the downstream application: #{e.message}")
   end
 
   # error_details: Hash(field_name: String => [error_messages]: Array(String))

@@ -1,0 +1,20 @@
+# Safely call out to content store and translate any http errors
+# to
+module Adapters
+  class ContentStore
+    def self.put_content_item(base_path, content_item)
+      CommandError.with_error_handling do
+        PublishingApi.service(:live_content_store).put_content_item(
+          base_path:,
+          content_item:,
+        )
+      end
+    end
+
+    def self.delete_content_item(base_path)
+      CommandError.with_error_handling(ignore_404s: true) do
+        PublishingApi.service(:live_content_store).delete_content_item(base_path)
+      end
+    end
+  end
+end
