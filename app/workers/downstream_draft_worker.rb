@@ -24,5 +24,42 @@ class DownstreamDraftWorker
     # Do something
     logger.info "DownstreamDraftWorker executing..."
     logger.debug { "args: #{args.inspect}" }
+
+    assign_attributes(args)  
+    
+    unless edition
+      raise AbortWorkerError, "A downstreamable edition was not found for content_id: #{content_id}"
+    end    
+
+    unless dependency_resolution_source_content_id.nil?
+      DownstreamService.set_publishing_platform_dependency_resolution_source_content_id_header(
+        dependency_resolution_source_content_id,
+      )
+    end    
   end
+
+private  
+
+  attr_reader :content_id,
+              :edition,
+              :payload_version,
+              :update_dependencies,
+              :dependency_resolution_source_content_id,
+              :orphaned_content_ids,
+              :source_command,
+              :source_fields
+
+  def assign_attributes(attributes)
+    @content_id = attributes.fetch("content_id")
+    @edition = Queries::GetEditionForContentStore.call(content_id, include_draft: true)
+    @payload_version = Event.maximum_id
+    @orphaned_content_ids = attributes.fetch("orphaned_content_ids", [])
+    @update_dependencies = attributes.fetch("update_dependencies", true)
+    @dependency_resolution_source_content_id = attributes.fetch(
+      "dependency_resolution_source_content_id",
+      nil,
+    )
+    @source_command = attributes["source_command"]
+    @source_fields = attributes.fetch("source_fields", [])
+  end  
 end
