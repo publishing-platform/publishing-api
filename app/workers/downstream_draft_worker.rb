@@ -25,22 +25,22 @@ class DownstreamDraftWorker
     logger.info "DownstreamDraftWorker executing..."
     logger.debug { "args: #{args.inspect}" }
 
-    assign_attributes(args)  
-    
+    assign_attributes(args)
+
     unless edition
       raise AbortWorkerError, "A downstreamable edition was not found for content_id: #{content_id}"
-    end    
+    end
 
     unless dependency_resolution_source_content_id.nil?
       DownstreamService.set_publishing_platform_dependency_resolution_source_content_id_header(
         dependency_resolution_source_content_id,
       )
-    end  
-    
-    downstream_payload = DownstreamPayload.new(edition, payload_version, draft: true)    
+    end
+
+    DownstreamPayload.new(edition, payload_version, draft: true)
   end
 
-private  
+private
 
   attr_reader :content_id,
               :edition,
@@ -63,5 +63,5 @@ private
     )
     @source_command = attributes["source_command"]
     @source_fields = attributes.fetch("source_fields", [])
-  end  
+  end
 end
