@@ -35,7 +35,9 @@ class DownstreamDraftWorker
       DownstreamService.set_publishing_platform_dependency_resolution_source_content_id_header(
         dependency_resolution_source_content_id,
       )
-    end    
+    end  
+    
+    downstream_payload = DownstreamPayload.new(edition, payload_version, draft: true)    
   end
 
 private  
