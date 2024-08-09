@@ -37,7 +37,7 @@ module Presenters
         # .merge(expanded_links_attributes)
         .merge(schema_name_and_document_type)
         .merge(withdrawal_notice)
-        # .merge(publishing_request_id)
+        .merge(publishing_request_id)
     end
 
     # def expanded_links
@@ -111,14 +111,14 @@ module Presenters
       end
     end
 
-    # def publishing_request_id
-    #   if edition.publishing_request_id
-    #     {
-    #       publishing_request_id: edition.publishing_request_id,
-    #     }
-    #   else
-    #     {}
-    #   end
-    # end
+    def publishing_request_id
+      if edition.publishing_request_id
+        {
+          publishing_request_id: edition.publishing_request_id,
+        }
+      else
+        {}
+      end
+    end
   end
 end
