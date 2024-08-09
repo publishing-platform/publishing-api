@@ -36,7 +36,7 @@ module Presenters
         .merge(rendered_details)
         # .merge(expanded_links_attributes)
         .merge(schema_name_and_document_type)
-        # .merge(withdrawal_notice)
+        .merge(withdrawal_notice)
         # .merge(publishing_request_id)
     end
 
@@ -95,21 +95,21 @@ module Presenters
       }
     end
 
-    # def withdrawal_notice
-    #   unpublishing = edition.unpublishing
+    def withdrawal_notice
+      unpublishing = edition.unpublishing
 
-    #   if unpublishing && unpublishing.withdrawal?
-    #     withdrawn_at = (unpublishing.unpublished_at || unpublishing.created_at).iso8601
-    #     {
-    #       withdrawn_notice: {
-    #         explanation: unpublishing.explanation,
-    #         withdrawn_at:,
-    #       },
-    #     }
-    #   else
-    #     {}
-    #   end
-    # end
+      if unpublishing && unpublishing.withdrawal?
+        withdrawn_at = (unpublishing.unpublished_at || unpublishing.created_at).iso8601
+        {
+          withdrawn_notice: {
+            explanation: unpublishing.explanation,
+            withdrawn_at:,
+          },
+        }
+      else
+        {}
+      end
+    end
 
     # def publishing_request_id
     #   if edition.publishing_request_id
