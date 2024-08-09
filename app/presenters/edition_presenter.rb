@@ -35,7 +35,6 @@ module Presenters
         .merge(auth_bypass_ids)
         .merge(rendered_details)
         # .merge(expanded_links_attributes)
-        # .merge(access_limited)
         # .merge(schema_name_and_document_type)
         # .merge(document_supertypes)
         # .merge(withdrawal_notice)
@@ -69,26 +68,6 @@ module Presenters
     #   {
     #     expanded_links:,
     #   }
-    # end
-
-    # def access_limited
-    #   return {} unless access_limit
-
-    #   if edition.state != "draft"
-    #     GovukError.notify(
-    #       "Tried to send non-draft item with access_limited data",
-    #       level: "warning",
-    #       extra: { content_id: edition.content_id },
-    #     )
-    #     {}
-    #   else
-    #     {
-    #       access_limited: {
-    #         users: access_limit.users,
-    #         organisations: access_limit.organisations,
-    #       },
-    #     }
-    #   end
     # end
 
     # def expanded_link_set_presenter
