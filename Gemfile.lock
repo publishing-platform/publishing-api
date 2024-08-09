@@ -120,6 +120,8 @@ GEM
       mini_portile2 (>= 2.2.0)
     jwt (2.8.2)
       base64
+    kramdown (2.4.0)
+      rexml
     language_server-protocol (3.17.0.3)
     link_header (0.0.8)
     loofah (2.22.0)
@@ -191,6 +193,9 @@ GEM
       sentry-rails (~> 5.3)
       sentry-ruby (~> 5.3)
     publishing_platform_location (0.2.0)
+    publishing_platform_markdown (0.1.0)
+      kramdown (>= 2.3.1, < 2.4.1)
+      sanitize (~> 6)
     publishing_platform_rubocop (0.1.0)
       rubocop (= 1.63.4)
       rubocop-ast (= 1.31.3)
@@ -303,6 +308,9 @@ GEM
     rubocop-rspec_rails (2.29.1)
       rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
+    sanitize (6.1.2)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.12.0)
     sentry-rails (5.18.1)
       railties (>= 5.0)
       sentry-ruby (~> 5.18.1)
@@ -361,6 +369,7 @@ DEPENDENCIES
   publishing_platform_api_adapters
   publishing_platform_app_config
   publishing_platform_location
+  publishing_platform_markdown
   publishing_platform_rubocop
   publishing_platform_schemas
   publishing_platform_sidekiq

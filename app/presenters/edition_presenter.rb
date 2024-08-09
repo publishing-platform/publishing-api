@@ -26,39 +26,39 @@ module Presenters
     end
 
     def for_content_store(payload_version)
-      # present.except(:update_type).merge(payload_version:)
+      present.except(:update_type).merge(payload_version:)
     end
 
-    # def present
-    #   edition.to_h
-    #     .except(*NON_PRESENTED_PROPERTIES)
-    #     .merge(auth_bypass_ids)
-    #     .merge(rendered_details)
-    #     .merge(expanded_links_attributes)
-    #     .merge(access_limited)
-    #     .merge(schema_name_and_document_type)
-    #     .merge(document_supertypes)
-    #     .merge(withdrawal_notice)
-    #     .merge(publishing_request_id)
-    # end
+    def present
+      edition.to_h
+        .except(*NON_PRESENTED_PROPERTIES)
+        .merge(auth_bypass_ids)
+        .merge(rendered_details)
+        # .merge(expanded_links_attributes)
+        # .merge(access_limited)
+        # .merge(schema_name_and_document_type)
+        # .merge(document_supertypes)
+        # .merge(withdrawal_notice)
+        # .merge(publishing_request_id)
+    end
 
     # def expanded_links
     #   expanded_link_set_presenter.links
     # end
 
-    # def rendered_details
-    #   { details: details_presenter.details }
-    # end
+    def rendered_details
+      { details: details_presenter.details }
+    end
 
   private
 
-    # attr_reader :draft, :edition
+    attr_reader :draft, :edition
 
-    # def auth_bypass_ids
-    #   return {} unless draft
+    def auth_bypass_ids
+      return {} unless draft
 
-    #   { auth_bypass_ids: edition.auth_bypass_ids || [] }
-    # end
+      { auth_bypass_ids: edition.auth_bypass_ids || [] }
+    end
 
     # def unexpanded_links
     #   links = ::Queries::LinksForEditionIds.new([edition.id]).merged_links
@@ -98,23 +98,17 @@ module Presenters
     #   )
     # end
 
-    # def details_presenter
-    #   @details_presenter ||= Presenters::DetailsPresenter.new(
-    #     edition.to_h[:details],
-    #     change_history_presenter,
-    #     content_embed_presenter,
-    #   )
-    # end
+    def details_presenter
+      @details_presenter ||= Presenters::DetailsPresenter.new(
+        edition.to_h[:details],
+        change_history_presenter,
+      )
+    end
 
-    # def content_embed_presenter
-    #   @content_embed_presenter ||=
-    #     Presenters::ContentEmbedPresenter.new(edition)
-    # end
-
-    # def change_history_presenter
-    #   @change_history_presenter ||=
-    #     Presenters::ChangeHistoryPresenter.new(edition)
-    # end
+    def change_history_presenter
+      @change_history_presenter ||=
+        Presenters::ChangeHistoryPresenter.new(edition)
+    end
 
     # def access_limit
     #   @access_limit ||= AccessLimit.find_by(edition_id: edition.id)
