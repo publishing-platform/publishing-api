@@ -89,10 +89,6 @@ module Presenters
         Presenters::ChangeHistoryPresenter.new(edition)
     end
 
-    # def access_limit
-    #   @access_limit ||= AccessLimit.find_by(edition_id: edition.id)
-    # end
-
     # def schema_name_and_document_type
     #   {
     #     schema_name: edition.schema_name,
