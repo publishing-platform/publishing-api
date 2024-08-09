@@ -36,7 +36,6 @@ module Presenters
         .merge(rendered_details)
         # .merge(expanded_links_attributes)
         .merge(schema_name_and_document_type)
-        # .merge(document_supertypes)
         # .merge(withdrawal_notice)
         # .merge(publishing_request_id)
     end
@@ -95,10 +94,6 @@ module Presenters
         document_type: edition.document_type,
       }
     end
-
-    # def document_supertypes
-    #   GovukDocumentTypes.supertypes(document_type: edition.document_type)
-    # end
 
     # def withdrawal_notice
     #   unpublishing = edition.unpublishing
