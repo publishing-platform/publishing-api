@@ -37,7 +37,9 @@ class DownstreamDraftWorker
       )
     end
 
-    DownstreamPayload.new(edition, payload_version, draft: true)
+    downstream_payload = DownstreamPayload.new(edition, payload_version, draft: true)
+
+    
   end
 
 private
