@@ -35,7 +35,7 @@ module Presenters
         .merge(auth_bypass_ids)
         .merge(rendered_details)
         # .merge(expanded_links_attributes)
-        # .merge(schema_name_and_document_type)
+        .merge(schema_name_and_document_type)
         # .merge(document_supertypes)
         # .merge(withdrawal_notice)
         # .merge(publishing_request_id)
@@ -89,12 +89,12 @@ module Presenters
         Presenters::ChangeHistoryPresenter.new(edition)
     end
 
-    # def schema_name_and_document_type
-    #   {
-    #     schema_name: edition.schema_name,
-    #     document_type: edition.document_type,
-    #   }
-    # end
+    def schema_name_and_document_type
+      {
+        schema_name: edition.schema_name,
+        document_type: edition.document_type,
+      }
+    end
 
     # def document_supertypes
     #   GovukDocumentTypes.supertypes(document_type: edition.document_type)
