@@ -117,8 +117,8 @@
       "type": "string",
       "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$"
     },
-    "body_html_and_govspeak": {
-      "description": "The main content provided as HTML with the govspeak markdown it's rendered from",
+    "body_html_and_markdown": {
+      "description": "The main content provided as HTML with the markdown markdown it's rendered from",
       "anyOf": [
         {
           "type": "string"
@@ -161,7 +161,7 @@
       "additionalProperties": false,
       "properties": {
         "body": {
-          "$ref": "#/definitions/body_html_and_govspeak"
+          "$ref": "#/definitions/body_html_and_markdown"
         },
         "change_history": {
           "$ref": "#/definitions/change_history"

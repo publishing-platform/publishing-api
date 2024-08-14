@@ -90,11 +90,11 @@
     },
   },
   body: {
-    description: "The main content provided as HTML rendered from govspeak",
+    description: "The main content provided as HTML rendered from markdown",
     type: "string",
   },
-  body_html_and_govspeak: {
-    description: "The main content provided as HTML with the govspeak markdown it's rendered from",
+  body_html_and_markdown: {
+    description: "The main content provided as HTML with the markdown markdown it's rendered from",
     anyOf: [
       {
         "$ref": "#/definitions/multiple_content_types",

@@ -6,7 +6,7 @@
       additionalProperties: false,
       properties: {
         body: {
-          "$ref": "#/definitions/body_html_and_govspeak",
+          "$ref": "#/definitions/body_html_and_markdown",
         },
         change_history: {
           "$ref": "#/definitions/change_history",
