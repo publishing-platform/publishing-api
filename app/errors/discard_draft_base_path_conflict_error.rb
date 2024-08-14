@@ -1,0 +1,2 @@
+class DiscardDraftBasePathConflictError < RuntimeError
+end
