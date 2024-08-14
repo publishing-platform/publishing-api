@@ -95,8 +95,7 @@ module_function
   end
 
   def dependency_resolution
-    # TODO
-    # @dependency_resolution ||= ExpansionRules::DependencyResolution.new(self)
+    @dependency_resolution ||= ExpansionRules::DependencyResolution.new(self)
   end
 
   def expansion_fields(document_type, link_type: nil, draft: true)
