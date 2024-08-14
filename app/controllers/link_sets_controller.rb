@@ -16,7 +16,7 @@ class LinkSetsController < ApplicationController
     )
 
     render json:
-  end  
+  end
 
 private
 
@@ -28,7 +28,7 @@ private
 
   def generate?
     ActiveModel::Type::Boolean.new.cast(params.fetch(:generate, false))
-  end  
+  end
 
   def links_params
     payload.merge(content_id:)

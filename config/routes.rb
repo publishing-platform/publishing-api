@@ -20,7 +20,6 @@ Rails.application.routes.draw do
       get "/links/:content_id", to: "link_sets#get_links"
       patch "/links/:content_id", to: "link_sets#patch_links"
       get "/expanded-links/:content_id", to: "link_sets#expanded_links"
-
     end
 
     get "/linkables", to: "content_items#linkables"
