@@ -34,15 +34,15 @@ module Presenters
         .except(*NON_PRESENTED_PROPERTIES)
         .merge(auth_bypass_ids)
         .merge(rendered_details)
-        # .merge(expanded_links_attributes)
+        .merge(expanded_links_attributes)
         .merge(schema_name_and_document_type)
         .merge(withdrawal_notice)
         .merge(publishing_request_id)
     end
 
-    # def expanded_links
-    #   expanded_link_set_presenter.links
-    # end
+    def expanded_links
+      expanded_link_set_presenter.links
+    end
 
     def rendered_details
       { details: details_presenter.details }
@@ -58,23 +58,18 @@ module Presenters
       { auth_bypass_ids: edition.auth_bypass_ids || [] }
     end
 
-    # def unexpanded_links
-    #   links = ::Queries::LinksForEditionIds.new([edition.id]).merged_links
-    #   links[edition.id].symbolize_keys
-    # end
+    def expanded_links_attributes
+      {
+        expanded_links:,
+      }
+    end
 
-    # def expanded_links_attributes
-    #   {
-    #     expanded_links:,
-    #   }
-    # end
-
-    # def expanded_link_set_presenter
-    #   @expanded_link_set_presenter ||= Presenters::Queries::ExpandedLinkSet.by_edition(
-    #     edition,
-    #     with_drafts: draft,
-    #   )
-    # end
+    def expanded_link_set_presenter
+      @expanded_link_set_presenter ||= Presenters::Queries::ExpandedLinkSet.by_edition(
+        edition,
+        with_drafts: draft,
+      )
+    end
 
     def details_presenter
       @details_presenter ||= Presenters::DetailsPresenter.new(

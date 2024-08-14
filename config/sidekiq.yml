@@ -3,4 +3,5 @@
 :concurrency: 12
 :queues:
   - downstream
+  - dependency_resolution
   - default

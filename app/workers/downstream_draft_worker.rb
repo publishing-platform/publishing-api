@@ -39,7 +39,15 @@ class DownstreamDraftWorker
 
     downstream_payload = DownstreamPayload.new(edition, payload_version, draft: true)
 
+    update_expanded_links(downstream_payload)    
     
+    if edition.base_path
+      DownstreamService.update_draft_content_store(downstream_payload)
+    end   
+    
+    enqueue_dependencies if update_dependencies
+  rescue AbortWorkerError => e
+    PublishingPlatformError.notify(e, level: "warning", extra: args)
   end
 
 private
@@ -66,4 +74,37 @@ private
     @source_command = attributes["source_command"]
     @source_fields = attributes.fetch("source_fields", [])
   end
+
+  def enqueue_dependencies
+    DependencyResolutionWorker.perform_async(
+      "content_store" => "Adapters::DraftContentStore",
+      "content_id" => content_id,
+      "orphaned_content_ids" => orphaned_content_ids,
+      "source_command" => source_command,
+      "source_document_type" => edition.document_type,
+      "source_fields" => source_fields,
+    )
+  end  
+
+  def update_expanded_links(downstream_payload)
+    ExpandedLinks.locked_update(
+      content_id:,
+      with_drafts: true,
+      payload_version:,
+      expanded_links: downstream_payload.expanded_links,
+    )
+
+    # When a document is only in draft it's expanded links can still be
+    # accessed without drafts, so this is generates them as well.
+    live_links = Presenters::Queries::ExpandedLinkSet.by_content_id(
+      content_id,
+      with_drafts: false,
+    )
+    ExpandedLinks.locked_update(
+      content_id:,
+      with_drafts: false,
+      payload_version:,
+      expanded_links: live_links.links,
+    )
+  end  
 end

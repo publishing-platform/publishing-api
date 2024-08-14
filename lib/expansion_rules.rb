@@ -91,8 +91,7 @@ module_function
   end
 
   def link_expansion
-    # TODO
-    # @link_expansion ||= ExpansionRules::LinkExpansion.new(self)
+    @link_expansion ||= ExpansionRules::LinkExpansion.new(self)
   end
 
   def dependency_resolution
