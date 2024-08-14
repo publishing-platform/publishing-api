@@ -25,32 +25,32 @@ class DownstreamLiveWorker
     logger.info "DownstreamLiveWorker executing..."
     logger.debug { "args: #{args.inspect}" }
 
-    assign_attributes(args)   
-    
+    assign_attributes(args)
+
     unless edition
       raise AbortWorkerError, "A downstreamable edition was not found for content_id: #{content_id}"
     end
-    
+
     unless dependency_resolution_source_content_id.nil?
       DownstreamService.set_publishing_platform_dependency_resolution_source_content_id_header(
         dependency_resolution_source_content_id,
       )
     end
-    
-    downstream_payload = DownstreamPayload.new(edition, payload_version, draft: false) 
-    
-    update_expanded_links(downstream_payload)    
+
+    downstream_payload = DownstreamPayload.new(edition, payload_version, draft: false)
+
+    update_expanded_links(downstream_payload)
 
     if edition.base_path
       DownstreamService.update_live_content_store(downstream_payload)
-    end   
-     
-    enqueue_dependencies if update_dependencies   
+    end
+
+    enqueue_dependencies if update_dependencies
   rescue AbortWorkerError => e
-    PublishingPlatformError.notify(e, level: "warning", extra: args)     
+    PublishingPlatformError.notify(e, level: "warning", extra: args)
   end
 
-  private
+private
 
   attr_reader :content_id,
               :edition,
@@ -73,7 +73,7 @@ class DownstreamLiveWorker
     )
     @source_command = attributes["source_command"]
     @source_fields = attributes.fetch("source_fields", [])
-  end  
+  end
 
   def enqueue_dependencies
     DependencyResolutionWorker.perform_async(
@@ -84,7 +84,7 @@ class DownstreamLiveWorker
       "source_document_type" => edition.document_type,
       "source_fields" => source_fields,
     )
-  end    
+  end
 
   def update_expanded_links(downstream_payload)
     ExpandedLinks.locked_update(
@@ -93,5 +93,5 @@ class DownstreamLiveWorker
       payload_version:,
       expanded_links: downstream_payload.expanded_links,
     )
-  end  
+  end
 end
