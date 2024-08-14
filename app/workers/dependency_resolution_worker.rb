@@ -10,13 +10,13 @@ class DependencyResolutionWorker
     logger.info "DependencyResolutionWorker executing..."
     logger.debug { "args: #{args.inspect}" }
 
-    assign_attributes(args) 
-    
+    assign_attributes(args)
+
     dependencies.each do |content_id|
       send_downstream(content_id)
-    end    
+    end
 
-    orphaned_content_ids_for_content_store.each { |content_id| send_downstream(content_id) }    
+    orphaned_content_ids_for_content_store.each { |content_id| send_downstream(content_id) }
   end
 
 private
@@ -35,7 +35,7 @@ private
     @source_command = args["source_command"]
     @source_document_type = args["source_document_type"]
     @source_fields = args.fetch("source_fields", [])
-  end  
+  end
 
   def orphaned_content_ids_for_content_store
     Document
@@ -48,23 +48,23 @@ private
 
   def content_stores
     draft? ? %w[draft live] : %w[live]
-  end  
+  end
 
   def dependencies
     Queries::ContentDependencies.new(
       content_id:,
       content_stores:,
     ).call
-  end  
+  end
 
   def draft?
     content_store == Adapters::DraftContentStore
-  end  
+  end
 
   def send_downstream(content_id)
     downstream_draft(content_id)
     downstream_live(content_id)
-  end  
+  end
 
   def downstream_draft(dependent_content_id)
     return unless draft?
@@ -72,7 +72,7 @@ private
     DownstreamDraftWorker.perform_async(
       worker_params.merge({
         "content_id" => dependent_content_id,
-      })
+      }),
     )
   end
 
@@ -82,9 +82,9 @@ private
     DownstreamLiveWorker.perform_async(
       worker_params.merge({
         "content_id" => dependent_content_id,
-      })
+      }),
     )
-  end  
+  end
 
   def worker_params
     {
@@ -93,5 +93,5 @@ private
       "source_command" => source_command,
       "source_fields" => source_fields,
     }
-  end  
+  end
 end

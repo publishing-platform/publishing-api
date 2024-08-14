@@ -10,7 +10,7 @@ class DownstreamDiscardDraftWorker
     logger.info "DownstreamDiscardDraftWorker executing..."
     logger.debug { "args: #{args.inspect}" }
 
-    assign_attributes(args)    
+    assign_attributes(args)
 
     current_path = edition.try(:base_path)
 
@@ -22,11 +22,11 @@ class DownstreamDiscardDraftWorker
       end
     elsif base_path
       DownstreamService.discard_from_draft_content_store(base_path)
-    end    
-    
+    end
+
     update_expanded_links
 
-    enqueue_dependencies if update_dependencies    
+    enqueue_dependencies if update_dependencies
   rescue DiscardDraftBasePathConflictError => e
     logger.warn(e.message)
   end
@@ -49,7 +49,7 @@ private
     @update_dependencies = attributes.fetch("update_dependencies", true)
     @source_command = attributes["source_command"]
     @source_document_type = attributes["source_document_type"]
-  end 
+  end
 
   def enqueue_dependencies
     DependencyResolutionWorker.perform_async(
@@ -58,7 +58,7 @@ private
       "source_command" => source_command,
       "source_document_type" => edition&.document_type || source_document_type,
     )
-  end  
+  end
 
   def update_expanded_links
     if edition
@@ -74,9 +74,9 @@ private
         with_drafts: true,
       ).where("payload_version < ?", payload_version).delete_all
     end
-  end  
-  
+  end
+
   def downstream_payload
     @downstream_payload ||= DownstreamPayload.new(edition, payload_version, draft: true)
-  end  
+  end
 end
