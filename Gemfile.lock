@@ -192,7 +192,7 @@ GEM
     publishing_platform_app_config (0.1.0)
       sentry-rails (~> 5.3)
       sentry-ruby (~> 5.3)
-    publishing_platform_location (0.2.0)
+    publishing_platform_location (0.3.0)
     publishing_platform_markdown (0.1.0)
       kramdown (>= 2.3.1, < 2.4.1)
       sanitize (~> 6)
