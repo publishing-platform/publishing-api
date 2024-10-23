@@ -200,6 +200,7 @@
       "description": "The application that published this item.",
       "type": "string",
       "enum": [
+        "organisations-publisher",
         "publisher"
       ]
     },
@@ -207,6 +208,7 @@
       "description": "The application that renders this item.",
       "type": "string",
       "enum": [
+        "collections-frontend",
         "frontend"
       ]
     },

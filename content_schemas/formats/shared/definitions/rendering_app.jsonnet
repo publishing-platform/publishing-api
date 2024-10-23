@@ -3,6 +3,7 @@
     description: "The application that renders this item.",
     type: "string",
     enum: [
+      "collections-frontend",
       "frontend",
     ],
   },

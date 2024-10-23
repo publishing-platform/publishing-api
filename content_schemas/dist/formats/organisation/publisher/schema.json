@@ -3,10 +3,13 @@
   "type": "object",
   "required": [
     "base_path",
+    "details",
     "document_type",
     "publishing_app",
-    "redirects",
+    "rendering_app",
+    "routes",
     "schema_name",
+    "title",
     "update_type"
   ],
   "additionalProperties": false,
@@ -25,18 +28,15 @@
       ]
     },
     "description": {
-      "type": "null"
+      "$ref": "#/definitions/description_optional"
     },
     "details": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-      }
+      "$ref": "#/definitions/details"
     },
     "document_type": {
       "type": "string",
       "enum": [
-        "redirect"
+        "organisation"
       ]
     },
     "first_published_at": {
@@ -72,35 +72,75 @@
       "$ref": "#/definitions/publishing_app_name"
     },
     "redirects": {
-      "$ref": "#/definitions/redirects"
-    },
-    "rendering_app": {
-      "type": "null"
-    },
-    "routes": {
       "type": "array",
       "additionalItems": false,
       "items": {
       }
     },
+    "rendering_app": {
+      "$ref": "#/definitions/rendering_app"
+    },
+    "routes": {
+      "$ref": "#/definitions/routes"
+    },
     "schema_name": {
       "type": "string",
       "enum": [
-        "redirect"
+        "organisation"
       ]
     },
     "title": {
-      "type": "null"
+      "$ref": "#/definitions/title"
     },
     "update_type": {
       "$ref": "#/definitions/update_type"
     }
   },
   "definitions": {
+    "description": {
+      "type": "string"
+    },
     "absolute_path": {
       "description": "A path only. Query string and/or fragment are not allowed.",
       "type": "string",
       "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$"
+    },
+    "description_optional": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/description"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "abbreviation": {
+          "description": "The organisation's abbreviation, if it has one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "organisation_type": {
+          "description": "The type of organisation.",
+          "type": "string",
+          "enum": [
+            "department"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "closed",
+            "live"
+          ]
+        }
+      }
     },
     "first_published_at": {
       "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
@@ -131,28 +171,24 @@
         "publisher"
       ]
     },
-    "redirect_route": {
+    "rendering_app": {
+      "description": "The application that renders this item.",
+      "type": "string",
+      "enum": [
+        "collections-frontend",
+        "frontend"
+      ]
+    },
+    "route": {
       "type": "object",
       "required": [
         "path",
-        "type",
-        "destination"
+        "type"
       ],
       "additionalProperties": false,
       "properties": {
-        "destination": {
-          "type": "string",
-          "format": "uri"
-        },
         "path": {
-          "$ref": "#/definitions/absolute_path"
-        },
-        "segments_mode": {
-          "description": "For prefix redirects, preserve or ignore the rest of the fullpath. For exact, preserve or ignore the querystring.",
-          "enum": [
-            "preserve",
-            "ignore"
-          ]
+          "type": "string"
         },
         "type": {
           "enum": [
@@ -162,12 +198,15 @@
         }
       }
     },
-    "redirects": {
+    "routes": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/redirect_route"
+        "$ref": "#/definitions/route"
       },
       "minItems": 1
+    },
+    "title": {
+      "type": "string"
     },
     "update_type": {
       "enum": [

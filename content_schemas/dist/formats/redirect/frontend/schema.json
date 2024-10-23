@@ -188,6 +188,7 @@
       "description": "The application that published this item.",
       "type": "string",
       "enum": [
+        "organisations-publisher",
         "publisher"
       ]
     },

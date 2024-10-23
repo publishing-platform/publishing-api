@@ -19,10 +19,10 @@
       "$ref": "#/definitions/absolute_path"
     },
     "content_id": {
-      "$ref": "#/definitions/guid_optional"
+      "$ref": "#/definitions/guid"
     },
     "description": {
-      "type": "null"
+      "$ref": "#/definitions/description_optional"
     },
     "details": {
       "$ref": "#/definitions/details"
@@ -30,7 +30,7 @@
     "document_type": {
       "type": "string",
       "enum": [
-        "gone"
+        "organisation"
       ]
     },
     "first_published_at": {
@@ -50,6 +50,16 @@
         "children": {
           "description": "Link type automatically added by Publishing API",
           "$ref": "#/definitions/frontend_links_with_base_path"
+        },
+        "parent": {
+          "description": "The parent content item.",
+          "$ref": "#/definitions/frontend_links_with_base_path",
+          "maxItems": 1
+        },
+        "primary_publishing_organisation": {
+          "description": "The organisation that published the page.",
+          "$ref": "#/definitions/frontend_links_with_base_path",
+          "maxItems": 1
         }
       }
     },
@@ -79,16 +89,16 @@
       "$ref": "#/definitions/publishing_request_id"
     },
     "rendering_app": {
-      "type": "null"
+      "$ref": "#/definitions/rendering_app"
     },
     "schema_name": {
       "type": "string",
       "enum": [
-        "gone"
+        "organisation"
       ]
     },
     "title": {
-      "type": "null"
+      "$ref": "#/definitions/title"
     },
     "updated_at": {
       "type": "string",
@@ -99,6 +109,9 @@
     }
   },
   "definitions": {
+    "description": {
+      "type": "string"
+    },
     "absolute_path": {
       "description": "A path only. Query string and/or fragment are not allowed.",
       "type": "string",
@@ -125,24 +138,42 @@
         }
       }
     },
+    "description_optional": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/description"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "details": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "alternative_path": {
+        "abbreviation": {
+          "description": "The organisation's abbreviation, if it has one.",
           "type": [
             "string",
             "null"
-          ],
-          "format": "uri"
+          ]
         },
         "change_history": {
           "$ref": "#/definitions/change_history"
         },
-        "explanation": {
-          "type": [
-            "string",
-            "null"
+        "organisation_type": {
+          "description": "The type of organisation.",
+          "type": "string",
+          "enum": [
+            "department"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "closed",
+            "live"
           ]
         }
       }
@@ -206,16 +237,6 @@
       "type": "string",
       "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
     },
-    "guid_optional": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/guid"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
     "public_updated_at": {
       "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
       "type": "string",
@@ -239,6 +260,17 @@
           "type": "null"
         }
       ]
+    },
+    "rendering_app": {
+      "description": "The application that renders this item.",
+      "type": "string",
+      "enum": [
+        "collections-frontend",
+        "frontend"
+      ]
+    },
+    "title": {
+      "type": "string"
     },
     "withdrawn_notice": {
       "type": "object",
