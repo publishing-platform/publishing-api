@@ -181,7 +181,7 @@ GEM
     parser (3.3.3.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.6)
+    pg (1.5.9)
     psych (5.1.2)
       stringio
     public_suffix (6.0.0)
@@ -367,7 +367,7 @@ DEPENDENCIES
   json-schema
   jsonnet
   oj
-  pg (~> 1.1)
+  pg (~> 1.5)
   publishing_platform_api_adapters
   publishing_platform_app_config
   publishing_platform_location
