@@ -377,7 +377,7 @@ DEPENDENCIES
   publishing_platform_sidekiq
   publishing_platform_sso
   puma (>= 5.0)
-  rails (~> 7.2.2)
+  rails (= 7.2.2)
   sentry-sidekiq
   sidekiq-unique-jobs
   tzinfo-data
