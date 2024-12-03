@@ -93,7 +93,7 @@ GEM
       reline (>= 0.3.8)
     domain_name (0.6.20240107)
     drb (2.2.1)
-    error_highlight (0.6.0)
+    error_highlight (0.7.0)
     erubi (1.13.0)
     faraday (2.9.2)
       faraday-net_http (>= 2.0, < 3.2)
