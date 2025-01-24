@@ -22,9 +22,15 @@ gem "with_advisory_lock"
 
 group :development, :test do
   gem "debug", platforms: %i[mri mswin mswin64 mingw x64_mingw]
+  gem "factory_bot_rails"
   gem "publishing_platform_rubocop"
+  gem "rspec-rails"
 end
 
 group :development do
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
+end
+
+group :test do
+  gem "simplecov"
 end

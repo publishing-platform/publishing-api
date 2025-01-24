@@ -1,0 +1,80 @@
+FactoryBot.define do
+  factory :edition, aliases: [:draft_edition] do
+    document
+    title { "VAT rates" }
+    description { "VAT rates for goods and services" }
+    schema_name { "answer" }
+    document_type { "answer" }
+    public_updated_at { nil }
+    first_published_at { nil }
+    last_edited_at { "2014-05-14T13:00:06Z" }
+    major_published_at { public_updated_at }
+    published_at { update_type == "major" ? public_updated_at : last_edited_at }
+    publishing_app { "publisher" }
+    rendering_app { "frontend" }
+    details { {} }
+    phase { "beta" }
+    update_type { "minor" }
+    routes do
+      [
+        {
+          path: base_path,
+          type: "exact",
+        },
+      ]
+    end
+    state { "draft" }
+    content_store { "draft" }
+    sequence(:base_path) { |n| "/vat-rates-#{n}" }
+    user_facing_version { 1 }
+
+    transient do
+      change_note { "note" }
+      links_hash { {} }
+    end
+
+    after(:create) do |item, evaluator|
+      unless item.update_type == "minor" || evaluator.change_note.nil?
+        create(
+          :change_note,
+          note: evaluator.change_note,
+          edition: item,
+        )
+      end
+
+      if evaluator.links_hash
+        evaluator.links_hash.each do |link_type, target_content_ids|
+          target_content_ids.each_with_index do |target_content_id, index|
+            create(
+              :link,
+              edition: item,
+              link_type:,
+              link_set: nil,
+              position: index,
+              target_content_id:,
+            )
+          end
+        end
+      end
+    end
+  end
+
+  factory :redirect_edition, aliases: [:redirect_draft_edition], parent: :edition do
+    transient do
+      destination { "/somewhere" }
+    end
+    sequence(:base_path) { |n| "/test-redirect-#{n}" }
+    schema_name { "redirect" }
+    document_type { "redirect" }
+    routes { [] }
+    redirects { [{ "path" => base_path, "type" => "exact", "destination" => destination }] }
+  end
+
+  factory :gone_edition, aliases: [:gone_draft_edition], parent: :edition do
+    sequence(:base_path) { |n| "/dodo-sanctuary-#{n}" }
+    schema_name { "gone" }
+    document_type { "gone" }
+    state { "superseded" }
+    rendering_app { nil }
+  end
+end
