@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe ExpansionRules do
   subject(:rules) { described_class }
 
