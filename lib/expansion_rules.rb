@@ -42,12 +42,16 @@ module_function
 
   DEFAULT_FIELDS_AND_DESCRIPTION = (DEFAULT_FIELDS + [:description]).freeze
 
+  ORGANISATION_FIELDS = (DEFAULT_FIELDS - [:public_updated_at] + details_fields(:abbreviation, :status)).freeze
+
   CUSTOM_EXPANSION_FIELDS =
     [
       { document_type: :redirect,
         fields: [] },
       { document_type: :gone,
         fields: [] },
+      { document_type: :organisation,
+        fields: ORGANISATION_FIELDS },
     ]
   .freeze
 
