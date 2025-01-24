@@ -25,6 +25,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "publishing_platform_rubocop"
   gem "rspec-rails"
+  gem "timecop"
 end
 
 group :development do
