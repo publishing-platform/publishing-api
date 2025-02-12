@@ -94,7 +94,7 @@
     "schema_name": {
       "type": "string",
       "enum": [
-        "organisation_homepage"
+        "organisations_homepage"
       ]
     },
     "title": {
