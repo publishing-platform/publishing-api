@@ -166,7 +166,8 @@
           "description": "The type of organisation.",
           "type": "string",
           "enum": [
-            "department"
+            "department",
+            "other"
           ]
         },
         "status": {

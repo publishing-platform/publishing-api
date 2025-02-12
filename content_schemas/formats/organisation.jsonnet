@@ -17,6 +17,7 @@
           type: "string",
           enum: [
             "department",
+            "other",            
           ],
           description: "The type of organisation.",
         },     
