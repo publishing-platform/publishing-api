@@ -1,0 +1,309 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "base_path",
+    "content_id",
+    "description",
+    "details",
+    "document_type",
+    "links",
+    "public_updated_at",
+    "schema_name",
+    "title",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "base_path": {
+      "$ref": "#/definitions/absolute_path"
+    },
+    "content_id": {
+      "$ref": "#/definitions/guid"
+    },
+    "description": {
+      "$ref": "#/definitions/description_optional"
+    },
+    "details": {
+      "$ref": "#/definitions/details"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "homepage"
+      ]
+    },
+    "first_published_at": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/first_published_at"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "description": "Link type automatically added by Publishing API",
+          "$ref": "#/definitions/frontend_links_with_base_path"
+        },
+        "popular_links": {
+          "description": "Collection of links to be used to display popular links on homepage",
+          "$ref": "#/definitions/frontend_links"
+        }
+      }
+    },
+    "phase": {
+      "description": "The service design phase of this content item",
+      "type": "string",
+      "enum": [
+        "alpha",
+        "beta",
+        "live"
+      ]
+    },
+    "public_updated_at": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/public_updated_at"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "publishing_app": {
+      "$ref": "#/definitions/publishing_app_name"
+    },
+    "publishing_request_id": {
+      "$ref": "#/definitions/publishing_request_id"
+    },
+    "rendering_app": {
+      "$ref": "#/definitions/rendering_app"
+    },
+    "schema_name": {
+      "type": "string",
+      "enum": [
+        "homepage"
+      ]
+    },
+    "title": {
+      "$ref": "#/definitions/title"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "withdrawn_notice": {
+      "$ref": "#/definitions/withdrawn_notice"
+    }
+  },
+  "definitions": {
+    "description": {
+      "type": "string"
+    },
+    "absolute_path": {
+      "description": "A path only. Query string and/or fragment are not allowed.",
+      "type": "string",
+      "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$"
+    },
+    "change_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "public_timestamp",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "description": "A summary of the change",
+            "type": "string"
+          },
+          "public_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "description_optional": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/description"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "details": {
+      "type": "object",
+      "properties": {
+        "change_history": {
+          "$ref": "#/definitions/change_history"
+        }
+      }
+    },
+    "first_published_at": {
+      "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "frontend_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "content_id",
+          "title"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "api_path": {
+            "$ref": "#/definitions/absolute_path"
+          },
+          "base_path": {
+            "$ref": "#/definitions/absolute_path"
+          },
+          "content_id": {
+            "$ref": "#/definitions/guid"
+          },
+          "document_type": {
+            "type": "string"
+          },
+          "links": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "$ref": "#/definitions/frontend_links"
+              }
+            }
+          },
+          "public_updated_at": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/public_updated_at"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "frontend_links_with_base_path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "base_path",
+          "content_id",
+          "title"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "api_path": {
+            "$ref": "#/definitions/absolute_path"
+          },
+          "base_path": {
+            "$ref": "#/definitions/absolute_path"
+          },
+          "content_id": {
+            "$ref": "#/definitions/guid"
+          },
+          "document_type": {
+            "type": "string"
+          },
+          "links": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "$ref": "#/definitions/frontend_links_with_base_path"
+              }
+            }
+          },
+          "public_updated_at": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/public_updated_at"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "guid": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "public_updated_at": {
+      "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "publishing_app_name": {
+      "description": "The application that published this item.",
+      "type": "string",
+      "enum": [
+        "organisations-publisher",
+        "publisher"
+      ]
+    },
+    "publishing_request_id": {
+      "description": "A unique identifier used to track publishing requests to rendered content",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rendering_app": {
+      "description": "The application that renders this item.",
+      "type": "string",
+      "enum": [
+        "collections-frontend",
+        "frontend"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "withdrawn_notice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "type": "string"
+        },
+        "withdrawn_at": {
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

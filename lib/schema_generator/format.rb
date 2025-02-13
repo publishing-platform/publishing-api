@@ -254,7 +254,9 @@ module SchemaGenerator
 
     class Links
       ALLOWED_KEYS = %w[description required minItems maxItems].freeze
-      LINKS_WITHOUT_BASE_PATHS = %w[].freeze
+      LINKS_WITHOUT_BASE_PATHS = %w[
+        popular_links
+      ].freeze
 
       attr_reader :links
 
