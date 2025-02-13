@@ -152,7 +152,8 @@
       "type": "string",
       "enum": [
         "organisations-publisher",
-        "publisher"
+        "publisher",
+        "publishing-api"
       ]
     },
     "routes_optional": {

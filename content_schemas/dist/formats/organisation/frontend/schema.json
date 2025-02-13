@@ -248,7 +248,8 @@
       "type": "string",
       "enum": [
         "organisations-publisher",
-        "publisher"
+        "publisher",
+        "publishing-api"
       ]
     },
     "publishing_request_id": {
@@ -267,6 +268,7 @@
       "type": "string",
       "enum": [
         "collections-frontend",
+        "content-store",
         "frontend"
       ]
     },

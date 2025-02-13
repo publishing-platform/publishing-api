@@ -4,6 +4,7 @@
     type: "string",
     enum: [
       "collections-frontend",
+      "content-store",
       "frontend",
     ],
   },

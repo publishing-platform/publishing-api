@@ -5,6 +5,7 @@
     enum: [
       "organisations-publisher",
       "publisher",
+      "publishing-api",
     ],
   },
 }

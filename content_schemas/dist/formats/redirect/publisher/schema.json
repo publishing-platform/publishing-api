@@ -128,7 +128,8 @@
       "type": "string",
       "enum": [
         "organisations-publisher",
-        "publisher"
+        "publisher",
+        "publishing-api"
       ]
     },
     "redirect_route": {

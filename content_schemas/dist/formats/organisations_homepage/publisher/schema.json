@@ -150,7 +150,8 @@
       "type": "string",
       "enum": [
         "organisations-publisher",
-        "publisher"
+        "publisher",
+        "publishing-api"
       ]
     },
     "rendering_app": {
@@ -158,6 +159,7 @@
       "type": "string",
       "enum": [
         "collections-frontend",
+        "content-store",
         "frontend"
       ]
     },
