@@ -145,7 +145,7 @@ module Commands
     def send_downstream
       return unless downstream
 
-      DownstreamDraftWorker.perform_async(
+      DownstreamDraftJob.perform_async(
         worker_params,
       )
 

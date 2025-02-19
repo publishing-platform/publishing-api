@@ -88,7 +88,7 @@ module Commands
       )
 
       if document.draft || document.live
-        DownstreamDraftWorker.perform_async(params)
+        DownstreamDraftJob.perform_async(params)
       end
 
       if document.live

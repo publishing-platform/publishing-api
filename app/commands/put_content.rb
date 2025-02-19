@@ -138,7 +138,7 @@ module Commands
     def send_downstream(content_id, orphaned_links)
       return unless downstream
 
-      DownstreamDraftWorker.perform_async(
+      DownstreamDraftJob.perform_async(
         "content_id" => content_id,
         "update_dependencies" => edition_diff.present?, # has the information that would be presented on documents linking to this document changed?
         "orphaned_content_ids" => orphaned_links,

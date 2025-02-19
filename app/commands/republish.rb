@@ -52,7 +52,7 @@ module Commands
 
     def send_downstream
       unless document.draft
-        DownstreamDraftWorker.perform_async(
+        DownstreamDraftJob.perform_async(
           "content_id" => content_id,
           "update_dependencies" => true,
           "source_command" => "republish",

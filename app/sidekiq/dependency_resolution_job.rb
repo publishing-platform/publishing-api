@@ -69,7 +69,7 @@ private
   def downstream_draft(dependent_content_id)
     return unless draft?
 
-    DownstreamDraftWorker.perform_async(
+    DownstreamDraftJob.perform_async(
       worker_params.merge({
         "content_id" => dependent_content_id,
       }),

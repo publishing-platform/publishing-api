@@ -55,10 +55,10 @@ RSpec.describe DependencyResolutionJob, :perform do
     end
 
     it "sends content ids downstream" do
-      expect(DownstreamDraftWorker).to receive(:perform_async).with(
+      expect(DownstreamDraftJob).to receive(:perform_async).with(
         a_hash_including("content_id"),
       )
-      expect(DownstreamDraftWorker).to receive(:perform_async).with(
+      expect(DownstreamDraftJob).to receive(:perform_async).with(
         a_hash_including("content_id" => orphaned_link_content_ids.first),
       )
     end
@@ -67,7 +67,7 @@ RSpec.describe DependencyResolutionJob, :perform do
       let(:content_store) { "Adapters::ContentStore" }
 
       it "doesn't send content ids downstream" do
-        expect(DownstreamDraftWorker).to_not receive(:perform_async).with(
+        expect(DownstreamDraftJob).to_not receive(:perform_async).with(
           a_hash_including("content_id" => orphaned_link_content_ids.first),
         )
       end
@@ -77,7 +77,7 @@ RSpec.describe DependencyResolutionJob, :perform do
       let(:orphaned_link_content_ids) { [create(:document).content_id] }
 
       it "doesn't send content ids downstream" do
-        expect(DownstreamDraftWorker).to_not receive(:perform_async).with(
+        expect(DownstreamDraftJob).to_not receive(:perform_async).with(
           a_hash_including("content_id" => orphaned_link_content_ids.first),
         )
       end
@@ -107,7 +107,7 @@ RSpec.describe DependencyResolutionJob, :perform do
     end
 
     it "does send draft content to the draft content store" do
-      expect(DownstreamDraftWorker).to receive(:perform_async).with(
+      expect(DownstreamDraftJob).to receive(:perform_async).with(
         a_hash_including(
           "content_id",
         ),

@@ -116,7 +116,7 @@ module Commands
     def send_downstream
       return unless downstream
 
-      DownstreamDraftWorker.perform_async(
+      DownstreamDraftJob.perform_async(
         "content_id" => document.content_id,
         "update_dependencies" => true,
         "source_command" => "unpublish",
