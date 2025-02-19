@@ -7,7 +7,7 @@ class DownstreamDiscardDraftJob
 
   def perform(args = {})
     # Do something
-    logger.info "DownstreamDiscardDraftJob executing..."
+    logger.debug "DownstreamDiscardDraftJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)

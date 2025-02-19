@@ -7,7 +7,7 @@ class DependencyResolutionJob
 
   def perform(args = {})
     # Do something
-    logger.info "DependencyResolutionJob executing..."
+    logger.debug "DependencyResolutionJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)

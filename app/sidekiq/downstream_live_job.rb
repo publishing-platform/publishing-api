@@ -22,7 +22,7 @@ class DownstreamLiveJob
 
   def perform(args = {})
     # Do something
-    logger.info "DownstreamLiveJob executing..."
+    logger.debug "DownstreamLiveJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)
