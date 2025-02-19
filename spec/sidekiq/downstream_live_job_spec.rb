@@ -10,7 +10,7 @@ RSpec.describe DownstreamLiveJob do
   let(:base_arguments) do
     {
       "content_id" => content_id,
-      "message_queue_event_type" => "major",
+      # "message_queue_event_type" => "major", # TODO: uncomment when message queue implemented
       "update_dependencies" => true,
     }
   end
