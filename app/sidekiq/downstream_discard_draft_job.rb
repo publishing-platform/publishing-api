@@ -1,5 +1,5 @@
 class DownstreamDiscardDraftJob
-  include Sidekiq::Worker
+  include Sidekiq::Job
 
   QUEUE = "downstream".freeze
 
