@@ -52,7 +52,7 @@ private
   end
 
   def enqueue_dependencies
-    DependencyResolutionWorker.perform_async(
+    DependencyResolutionJob.perform_async(
       "content_store" => "Adapters::DraftContentStore",
       "content_id" => content_id,
       "source_command" => source_command,

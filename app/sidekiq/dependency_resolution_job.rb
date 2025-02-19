@@ -1,5 +1,5 @@
-class DependencyResolutionWorker
-  include Sidekiq::Worker
+class DependencyResolutionJob
+  include Sidekiq::Job
 
   QUEUE = "dependency_resolution".freeze
 
@@ -7,7 +7,7 @@ class DependencyResolutionWorker
 
   def perform(args = {})
     # Do something
-    logger.info "DependencyResolutionWorker executing..."
+    logger.info "DependencyResolutionJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)
