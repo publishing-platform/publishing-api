@@ -149,7 +149,7 @@ module Commands
         worker_params,
       )
 
-      DownstreamLiveWorker.perform_async(
+      DownstreamLiveJob.perform_async(
         live_worker_params,
       )
     end

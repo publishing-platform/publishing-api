@@ -36,7 +36,7 @@ RSpec.describe DependencyResolutionJob, :perform do
   end
 
   it "the dependees get queued in the content store worker" do
-    expect(DownstreamLiveWorker).to receive(:perform_async).with(
+    expect(DownstreamLiveJob).to receive(:perform_async).with(
       a_hash_including(
         "content_id",
         # "message_queue_event_type" => "links", # TODO: uncomment when message queue implemented
@@ -94,7 +94,7 @@ RSpec.describe DependencyResolutionJob, :perform do
     end
 
     it "doesn't send draft content to the live content store" do
-      expect(DownstreamLiveWorker).to receive(:perform_async).with(
+      expect(DownstreamLiveJob).to receive(:perform_async).with(
         a_hash_including(
           "content_id",
         ),

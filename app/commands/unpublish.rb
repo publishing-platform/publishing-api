@@ -122,7 +122,7 @@ module Commands
         "source_command" => "unpublish",
       )
 
-      DownstreamLiveWorker.perform_async(
+      DownstreamLiveJob.perform_async(
         "content_id" => document.content_id,
         "update_dependencies" => true,
         "orphaned_content_ids" => orphaned_content_ids,

@@ -59,7 +59,7 @@ module Commands
         )
       end
 
-      DownstreamLiveWorker.perform_async(
+      DownstreamLiveJob.perform_async(
         "content_id" => content_id,
         "update_dependencies" => true,
         "source_command" => "republish",

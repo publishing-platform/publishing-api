@@ -92,7 +92,7 @@ module Commands
       end
 
       if document.live
-        DownstreamLiveWorker.perform_async(params)
+        DownstreamLiveJob.perform_async(params)
       end
     end
 

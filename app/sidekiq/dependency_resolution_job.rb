@@ -79,7 +79,7 @@ private
   def downstream_live(dependent_content_id)
     return if draft?
 
-    DownstreamLiveWorker.perform_async(
+    DownstreamLiveJob.perform_async(
       worker_params.merge({
         "content_id" => dependent_content_id,
       }),

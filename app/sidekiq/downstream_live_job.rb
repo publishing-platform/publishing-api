@@ -1,7 +1,7 @@
 require "sidekiq-unique-jobs"
 
-class DownstreamLiveWorker
-  include Sidekiq::Worker
+class DownstreamLiveJob
+  include Sidekiq::Job
 
   QUEUE = "downstream".freeze
 
@@ -22,7 +22,7 @@ class DownstreamLiveWorker
 
   def perform(args = {})
     # Do something
-    logger.info "DownstreamLiveWorker executing..."
+    logger.info "DownstreamLiveJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)
