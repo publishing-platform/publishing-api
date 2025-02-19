@@ -36,7 +36,7 @@ module Commands
     def downstream_discard_draft
       return unless downstream
 
-      DownstreamDiscardDraftWorker.perform_async(
+      DownstreamDiscardDraftJob.perform_async(
         "base_path" => draft.base_path,
         "content_id" => content_id,
         "update_dependencies" => true,
@@ -71,7 +71,7 @@ module Commands
       )
     end
 
-    # We pass the document type into the `DownstreamDiscardDraftWorker` which
+    # We pass the document type into the `DownstreamDiscardDraftJob` which
     # passes it down to the `DependencyResolutionJob`. The reason we do
     # this here and not in the discard draft worker is because the edition
     # may have already been destroyed by the time the worker runs, and it

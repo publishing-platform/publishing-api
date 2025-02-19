@@ -1,4 +1,4 @@
-class DownstreamDiscardDraftWorker
+class DownstreamDiscardDraftJob
   include Sidekiq::Worker
 
   QUEUE = "downstream".freeze
@@ -7,7 +7,7 @@ class DownstreamDiscardDraftWorker
 
   def perform(args = {})
     # Do something
-    logger.info "DownstreamDiscardDraftWorker executing..."
+    logger.info "DownstreamDiscardDraftJob executing..."
     logger.debug { "args: #{args.inspect}" }
 
     assign_attributes(args)
