@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Commands::ReservePath do
-  describe "call" do
+  describe "#call" do
     let(:payload) do
       { base_path: "/foo", publishing_app: "Foo" }
     end
@@ -30,7 +30,7 @@ RSpec.describe Commands::ReservePath do
         create(:path_reservation, base_path: "/foo", publishing_app: "Foo")
         expect {
           described_class.call(payload)
-        }.to raise_error CommandError
+        }.to raise_error CommandError, /is already reserved/
       end
     end
 
