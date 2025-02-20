@@ -373,7 +373,6 @@ RSpec.describe Commands::PatchLinkSet do
     end
 
     it "raises a command error" do
-      puts payload
       expect {
         described_class.call(payload)
       }.to raise_error(CommandError, "The payload did not conform to the schema")
