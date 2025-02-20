@@ -1,8 +1,10 @@
 module DependencyResolutionHelper
   def create_link_set(content_id = nil, links_hash: {})
+    document = create(:document, content_id: content_id || SecureRandom.uuid)
     link_set = create(
       :link_set,
-      content_id: content_id || SecureRandom.uuid,
+      document:,
+      content_id: document.content_id,
       links_hash:,
     )
     link_set.content_id
