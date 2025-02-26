@@ -6,13 +6,11 @@
     "links": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-      }
+      "properties": {}
     },
     "previous_version": {
       "type": "string"
     }
   },
-  "definitions": {
-  }
+  "definitions": {}
 }

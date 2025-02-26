@@ -50,8 +50,7 @@
     "links": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-      }
+      "properties": {}
     },
     "phase": {
       "description": "The service design phase of this content item",
@@ -74,8 +73,7 @@
     "redirects": {
       "type": "array",
       "additionalItems": false,
-      "items": {
-      }
+      "items": {}
     },
     "rendering_app": {
       "$ref": "#/definitions/rendering_app"
@@ -117,8 +115,7 @@
     },
     "details": {
       "type": "object",
-      "properties": {
-      }
+      "properties": {}
     },
     "first_published_at": {
       "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",

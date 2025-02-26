@@ -27,8 +27,7 @@
     "details": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-      }
+      "properties": {}
     },
     "document_type": {
       "type": "string",

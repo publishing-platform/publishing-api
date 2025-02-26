@@ -30,8 +30,7 @@
     "details": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-      }
+      "properties": {}
     },
     "document_type": {
       "type": "string",
@@ -50,8 +49,7 @@
     "links": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {
-      }
+      "properties": {}
     },
     "phase": {
       "description": "The service design phase of this content item",
@@ -80,8 +78,7 @@
     "routes": {
       "type": "array",
       "additionalItems": false,
-      "items": {
-      }
+      "items": {}
     },
     "schema_name": {
       "type": "string",
