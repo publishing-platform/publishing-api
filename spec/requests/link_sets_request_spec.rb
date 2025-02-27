@@ -3,6 +3,14 @@ require "rails_helper"
 RSpec.describe "/links", type: :request do
   let(:content_id) { SecureRandom.uuid }
   let(:request_path) { "/links/#{content_id}" }
+  let(:patch_links_params) do
+    {
+      content_id:,
+      links: {
+        primary_publishing_organisation: %w[30986e26-f504-4e14-a93f-a9593c34a8d9],
+      },
+    }
+  end
 
   describe "GET /get_links" do
     context "when the document exists" do
@@ -92,7 +100,7 @@ RSpec.describe "/links", type: :request do
     let!(:draft_edition) do
       create(:edition,
              document:,
-             base_path: "/some-path",
+             base_path:,
              title: "Some Title")
     end
     let(:primary_publishing_organisation) { [SecureRandom.uuid] }
@@ -291,6 +299,43 @@ RSpec.describe "/links", type: :request do
 
         expect(response.status).to eq(422)
         expect(parsed_response.first["message"]).to match "The property '#/links' contains additional properties"
+      end
+    end
+
+    context "draft content store times out" do
+      before do
+        stub_request(:put, PublishingPlatformLocation.find("draft-content-store") + "/content#{base_path}").to_timeout
+      end
+
+      it "returns an error" do
+        patch request_path, params: patch_links_params.to_json
+
+        expect(response.status).to eq(500)
+        expect(parsed_response).to eq(
+          "error" => {
+            "code" => 500,
+            "message" => "Unexpected error from the downstream application: Timed out connecting to server",
+          },
+        )
+      end
+    end
+
+    context "content store times out" do
+      before do
+        draft_edition.publish
+        stub_request(:put, PublishingPlatformLocation.find("content-store") + "/content#{base_path}").to_timeout
+      end
+
+      it "returns an error" do
+        patch request_path, params: patch_links_params.to_json
+
+        expect(response.status).to eq(500)
+        expect(parsed_response).to eq(
+          "error" => {
+            "code" => 500,
+            "message" => "Unexpected error from the downstream application: Timed out connecting to server",
+          },
+        )
       end
     end
   end
