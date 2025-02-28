@@ -467,4 +467,222 @@ RSpec.describe "/content", type: :request do
       end
     end
   end
+
+  describe "POST /publish" do
+    let(:publishing_platform_request_id) { "test" }
+    let!(:document) { create(:document, content_id:) }
+    let!(:edition) { create(:edition, document:) }
+    let(:request_path) { "/content/#{content_id}/publish" }
+
+    context "for an existing draft edition" do
+      before do
+        post request_path, params: {}.to_json, headers: { "HTTP_PUBLISHING_PLATFORM_REQUEST_ID" => publishing_platform_request_id }
+      end
+
+      it "is successful" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds with the content_id of the published item" do
+        expect(parsed_response.keys).to include("content_id")
+        expect(parsed_response["content_id"]).to eq(content_id)
+      end
+
+      it "updates the publishing_request_id" do
+        edition = Edition.last
+        expect(edition.publishing_request_id).to eq(publishing_platform_request_id)
+      end
+    end
+
+    context "with a 'previous_version' which matches the current lock version of the draft item" do
+      let(:body) { { previous_version: 1 } }
+
+      before do
+        post request_path, params: body.to_json
+      end
+
+      it "is successful" do
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "with a 'previous_version' which does not match the current lock version of the draft item" do
+      let(:body) { { previous_version: 2 } }
+
+      before do
+        post request_path, params: body.to_json
+      end
+
+      it "responds with 409" do
+        expect(response.status).to eq(409)
+        expect(parsed_response["error"]["message"]).to match("A lock-version conflict occurred")
+      end
+    end
+
+    context "for a non-existent edition" do
+      let(:request_path) { "/content/#{SecureRandom.uuid}/publish" }
+
+      before do
+        post request_path, params: {}.to_json
+      end
+
+      it "responds with 404" do
+        expect(response.status).to eq(404)
+      end
+    end
+  end
+
+  describe "POST /republish" do
+    let(:publishing_platform_request_id) { "test" }
+    let!(:document) { create(:document, content_id:) }
+    let!(:edition) { create(:live_edition, document:) }
+    let(:request_path) { "/content/#{content_id}/republish" }
+
+    context "for an existing live edition" do
+      before do
+        post request_path, params: {}.to_json, headers: { "HTTP_PUBLISHING_PLATFORM_REQUEST_ID" => publishing_platform_request_id }
+      end
+
+      it "is successful" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds with the content_id of the published item" do
+        expect(parsed_response.keys).to include("content_id")
+        expect(parsed_response["content_id"]).to eq(content_id)
+      end
+
+      it "updates the publishing_request_id" do
+        edition = Edition.last
+        expect(edition.publishing_request_id).to eq(publishing_platform_request_id)
+      end
+    end
+
+    context "with a 'previous_version' which matches the current lock version of the draft item" do
+      let(:body) { { previous_version: 1 } }
+
+      before do
+        post request_path, params: body.to_json
+      end
+
+      it "is successful" do
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "with a 'previous_version' which does not match the current lock version of the draft item" do
+      let(:body) { { previous_version: 2 } }
+
+      before do
+        post request_path, params: body.to_json
+      end
+
+      it "responds with 409" do
+        expect(response.status).to eq(409)
+        expect(parsed_response["error"]["message"]).to match("A lock-version conflict occurred")
+      end
+    end
+
+    context "for a draft edition" do
+      let!(:edition) { create(:draft_edition, document:) }
+
+      before do
+        post request_path, params: {}.to_json
+      end
+
+      it "responds with 404" do
+        expect(response.status).to eq(404)
+      end
+    end
+
+    context "for a non-existent edition" do
+      let(:request_path) { "/content/#{SecureRandom.uuid}/republish" }
+
+      before do
+        post request_path, params: {}.to_json
+      end
+
+      it "responds with 404" do
+        expect(response.status).to eq(404)
+      end
+    end
+  end
+
+  describe "POST /discard-draft" do
+    let(:document) { create(:document, content_id:) }
+    let(:request_path) { "/content/#{content_id}/discard-draft" }
+
+    context "when a draft edition exists" do
+      let!(:draft_edition) do
+        create(
+          :draft_edition,
+          document:,
+          title: "draft",
+          base_path:,
+        )
+      end
+
+      it "does not send to the live content store" do
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item).never
+        expect(WebMock).not_to have_requested(:any, /[^-]content-store.*/)
+
+        post request_path, params: {}.to_json
+
+        expect(response.status).to eq(200)
+      end
+
+      it "deletes the edition from the draft content store" do
+        expect(PublishingApi.service(:draft_content_store)).to receive(:delete_content_item)
+          .with(base_path)
+
+        post request_path, params: {}.to_json
+
+        expect(response.status).to eq(200)
+      end
+
+      it "deletes the edition from the database" do
+        post request_path, params: {}.to_json
+
+        expect(response.status).to eq(200)
+        expect(Edition.count).to eq(0)
+      end
+    end
+
+    context "when a draft edition does not exist" do
+      it "responds with 404" do
+        post request_path, params: {}.to_json
+
+        expect(response.status).to eq(404)
+      end
+
+      it "does not send to either content store" do
+        expect(WebMock).not_to have_requested(:any, /.*content-store.*/)
+        expect(PublishingApi.service(:draft_content_store)).not_to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).not_to receive(:put_content_item)
+
+        post request_path, params: {}.to_json
+      end
+
+      context "and a live edition exists" do
+        before do
+          create(:live_edition, document:)
+        end
+
+        it "returns a 422" do
+          post request_path, params: {}.to_json
+
+          puts parsed_response
+          expect(response.status).to eq(422)
+        end
+
+        it "does not send to either content store" do
+          expect(WebMock).not_to have_requested(:any, /.*content-store.*/)
+          expect(PublishingApi.service(:draft_content_store)).not_to receive(:put_content_item)
+          expect(PublishingApi.service(:live_content_store)).not_to receive(:put_content_item)
+
+          post request_path, params: {}.to_json
+        end
+      end
+    end
+  end
 end
