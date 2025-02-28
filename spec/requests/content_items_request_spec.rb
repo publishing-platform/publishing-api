@@ -685,4 +685,186 @@ RSpec.describe "/content", type: :request do
       end
     end
   end
+
+  describe "POST /unpublish" do
+    let(:request_path) { "/content/#{content_id}/unpublish" }
+    let(:document) { create(:document, content_id:) }
+    let!(:edition) do
+      create(
+        :live_edition,
+        document:,
+        base_path:,
+      )
+    end
+
+    describe "withdrawing" do
+      let(:withdrawal_params) do
+        {
+          type: "withdrawal",
+          explanation: "Test withdrawal",
+        }.to_json
+      end
+      let(:withdrawal_response) do
+        {
+          base_path:,
+          content_item: a_hash_including(
+            withdrawn_notice: {
+              explanation: "Test withdrawal",
+              withdrawn_at: Time.zone.now.iso8601,
+            },
+          ),
+        }
+      end
+
+      it "creates an Unpublishing" do
+        post request_path, params: withdrawal_params
+
+        expect(response.status).to eq(200)
+
+        unpublishing = Unpublishing.find_by(edition:)
+        expect(unpublishing.type).to eq("withdrawal")
+        expect(unpublishing.explanation).to eq("Test withdrawal")
+      end
+
+      it "sends the withdrawal information to the live content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+            .with(withdrawal_response)
+
+          post request_path, params: withdrawal_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      it "sends the withdrawal information to the draft content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+            .with(withdrawal_response)
+
+          post request_path, params: withdrawal_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      # TODO: uncomment when message queue implemented
+      # it "sends to the message queue" do
+      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      #     .with(a_hash_including(document_type: "answer"), event_type: "unpublish")
+
+      #   post request_path, params: withdrawal_params
+
+      #   expect(response.status).to eq(200)
+      # end
+    end
+
+    describe "redirecting" do
+      let(:redirect_params_with_alternative_path) do
+        {
+          type: "redirect",
+          alternative_path: "/new-path",
+        }.to_json
+      end
+      let(:redirect_params_with_redirects_hash) do
+        {
+          type: "redirect",
+          redirects: [
+            {
+              path: base_path,
+              type: :exact,
+              destination: "/new-path",
+            },
+          ],
+        }.to_json
+      end
+      let(:redirect_response) do
+        {
+          base_path:,
+          content_item: {
+            document_type: "redirect",
+            schema_name: "redirect",
+            base_path:,
+            publishing_app: edition.publishing_app,
+            public_updated_at: Time.zone.now.iso8601,
+            first_published_at: edition.first_published_at.iso8601,
+            redirects: [
+              {
+                path: base_path,
+                type: "exact",
+                destination: "/new-path",
+              },
+            ],
+            payload_version: anything,
+          },
+        }
+      end
+
+      shared_examples "unpublishing with redirects" do
+        it "creates an Unpublishing" do
+          post request_path, params: redirect_params
+
+          expect(response.status).to eq(200)
+
+          unpublishing = Unpublishing.find_by(edition:)
+          expect(unpublishing.type).to eq("redirect")
+          expect(unpublishing.redirects).to match_array([
+            a_hash_including(destination: "/new-path"),
+          ])
+        end
+
+        it "sends a redirect to the live content store" do
+          Timecop.freeze do
+            expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+              .with(redirect_response)
+
+            post request_path, params: redirect_params
+
+            expect(response.status).to eq(200)
+          end
+        end
+
+        it "sends a redirect to the draft content store" do
+          Timecop.freeze do
+            expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+              .with(redirect_response)
+
+            post request_path, params: redirect_params
+
+            expect(response.status).to eq(200)
+          end
+        end
+
+        # TODO: uncomment when message queue implemented
+        # it "sends to the message queue" do
+        #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+        #     .with(
+        #       a_hash_including(
+        #         document_type: "redirect",
+        #         redirects: [a_hash_including(destination: "/new-path")],
+        #       ),
+        #       event_type: "unpublish",
+        #     )
+
+        #   post request_path, params: redirect_params
+
+        #   expect(response.status).to eq(200)
+        # end
+      end
+
+      context "with a redirects hash payload" do
+        let(:redirect_params) { redirect_params_with_redirects_hash }
+        it_behaves_like "unpublishing with redirects"
+      end
+
+      context "with an alternative_path payload" do
+        let(:redirect_params) { redirect_params_with_alternative_path }
+        it_behaves_like "unpublishing with redirects"
+      end
+    end
+  end
 end
