@@ -519,6 +519,38 @@ RSpec.describe "/content", type: :request do
       end
     end
 
+    context "when publishing a draft which has a different content_id to the published edition on the same base_path" do
+      let(:draft_document) { create(:document, stale_lock_version: 3) }
+      let(:live_document) { create(:document, stale_lock_version: 5) }
+      let(:request_path) { "/content/#{draft_document.content_id}/publish" }
+
+      before do
+        stub_request(:put, %r{.*content-store.*/content/.*})
+      end
+
+      context "when both editions are 'regular' editions" do
+        before do
+          create(
+            :draft_edition,
+            document: draft_document,
+            base_path:,
+          )
+
+          create(
+            :live_edition,
+            document: live_document,
+            base_path:,
+          )
+        end
+
+        it "raises an error" do
+          post request_path, params: {}.to_json
+
+          expect(response.status).to eq(422)
+        end
+      end
+    end
+
     context "for a non-existent edition" do
       let(:request_path) { "/content/#{SecureRandom.uuid}/publish" }
 
