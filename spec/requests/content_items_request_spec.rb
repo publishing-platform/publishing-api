@@ -357,6 +357,17 @@ RSpec.describe "/content", type: :request do
 
         expect(response.body).to eq(presented_content_item.to_json)
       end
+
+      it "only sends to the draft content store" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+        expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item).never
+        expect(WebMock).not_to have_requested(:any, /[^-]content-store.*/)
+
+        put request_path, params: content_item_params.to_json
+
+        expect(response.status).to eq(200)
+      end
     end
 
     context "with valid request params for an existing edition" do
@@ -379,6 +390,46 @@ RSpec.describe "/content", type: :request do
         )
 
         expect(response.body).to eq(presented_content_item.to_json)
+      end
+
+      it "only sends to the draft content store" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+        expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item).never
+        expect(WebMock).not_to have_requested(:any, /[^-]content-store.*/)
+
+        put request_path, params: content_item_params.to_json
+
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "when a link set exists for the edition" do
+      let(:document) { create(:document, content_id:) }
+      let(:link_set) do
+        create(
+          :link_set,
+          content_id:,
+          document:,
+        )
+      end
+
+      let(:target_edition) { create(:edition, base_path: "/foo", title: "foo") }
+      let!(:links) { create(:link, link_set:, link_type: "parent", target_content_id: target_edition.document.content_id) }
+
+      let(:content_item_for_draft_content_store) do
+        content_item_params.except(:update_type).merge(
+          expanded_links: Presenters::Queries::ExpandedLinkSet.new(content_id:, draft: true).links,
+        )
+      end
+
+      it "sends to the draft content store" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+
+        put request_path, params: content_item_params.to_json
+
+        expect(PublishingApi.service(:draft_content_store)).to have_received(:put_content_item).twice
+        expect(response.status).to eq(200)
       end
     end
 
