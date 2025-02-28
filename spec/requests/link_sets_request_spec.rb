@@ -97,7 +97,7 @@ RSpec.describe "/links", type: :request do
 
   describe "PATCH /patch_links" do
     let!(:document) { create(:document, content_id:) }
-    let!(:draft_edition) do
+    let!(:edition) do
       create(:edition,
              document:,
              base_path:,
@@ -254,6 +254,59 @@ RSpec.describe "/links", type: :request do
       end
     end
 
+    context "when only a draft edition exists for the link set" do
+      it "only sends to the draft content store" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+        expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item).never
+        expect(WebMock).not_to have_requested(:any, /[^-]content-store.*/)
+
+        patch request_path, params: payload.to_json
+
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "when only a live edition exists for the link set" do
+      before do
+        edition.publish
+      end
+
+      it "sends the live item to both content stores" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item).with(anything)
+
+        expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+
+        patch request_path, params: payload.to_json
+
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "when draft and live editions exists for the link set" do
+      let!(:edition) do
+        create(:live_edition,
+               :with_draft,
+               document:,
+               base_path:,
+               title: "Some Title")
+      end
+
+      it "sends to both content stores" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item).with(anything)
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item).with(anything)
+
+        expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+
+        patch request_path, params: payload.to_json
+
+        expect(response.status).to eq(200)
+      end
+    end
+
     context "when payload is invalid" do
       let(:payload) do
         {
@@ -280,6 +333,22 @@ RSpec.describe "/links", type: :request do
 
         expect(response.status).to eq(422)
         expect(parsed_response.first).to eq "Schema could not be validated as the schema_name was not provided"
+      end
+    end
+
+    context "when an edition does not exist for the link set" do
+      before do
+        Edition.delete_all
+      end
+
+      it "does not send to either content store" do
+        expect(WebMock).not_to have_requested(:any, /.*content-store.*/)
+        expect(PublishingApi.service(:draft_content_store)).not_to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).not_to receive(:put_content_item)
+
+        patch request_path, params: payload.to_json
+
+        expect(response.status).to eq(422)
       end
     end
 
@@ -322,7 +391,7 @@ RSpec.describe "/links", type: :request do
 
     context "content store times out" do
       before do
-        draft_edition.publish
+        edition.publish
         stub_request(:put, PublishingPlatformLocation.find("content-store") + "/content#{base_path}").to_timeout
       end
 
