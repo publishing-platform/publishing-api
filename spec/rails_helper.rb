@@ -14,6 +14,11 @@ WebMock.disable_net_connect!
 
 require "sidekiq_unique_jobs/testing"
 
+# Sidekiq in test mode won't run server middleware by default.
+Sidekiq::Testing.server_middleware do |chain|
+  chain.add PublishingPlatformSidekiq::APIHeaders::ServerMiddleware
+end
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

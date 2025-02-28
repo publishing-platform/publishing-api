@@ -429,6 +429,11 @@ RSpec.describe "/content", type: :request do
         put request_path, params: content_item_params.to_json
 
         expect(PublishingApi.service(:draft_content_store)).to have_received(:put_content_item).twice
+        expect(PublishingApi.service(:draft_content_store)).to have_received(:put_content_item)
+          .with(a_hash_including(base_path:))
+        expect(PublishingApi.service(:draft_content_store)).to have_received(:put_content_item)
+          .with(a_hash_including(base_path: target_edition.base_path))
+
         expect(response.status).to eq(200)
       end
     end
@@ -522,7 +527,7 @@ RSpec.describe "/content", type: :request do
   describe "POST /publish" do
     let(:publishing_platform_request_id) { "test" }
     let!(:document) { create(:document, content_id:) }
-    let!(:edition) { create(:edition, document:) }
+    let!(:edition) { create(:edition, document:, base_path:) }
     let(:request_path) { "/content/#{content_id}/publish" }
 
     context "for an existing draft edition" do
@@ -543,6 +548,63 @@ RSpec.describe "/content", type: :request do
         edition = Edition.last
         expect(edition.publishing_request_id).to eq(publishing_platform_request_id)
       end
+    end
+
+    context "for an edition with dependencies" do
+      let(:link_set) do
+        create(
+          :link_set,
+          content_id:,
+          document:,
+        )
+      end
+
+      let(:draft_target_edition) { create(:edition, base_path: "/foo", title: "foo") }
+
+      before do
+        create(:link, link_set:, link_type: "parent", target_content_id: draft_target_edition.document.content_id)
+      end
+
+      it "doesn't send draft dependencies to the live content store" do
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:live_content_store)).to_not receive(:put_content_item)
+          .with(a_hash_including(base_path: "/foo"))
+
+        post request_path, params: {}.to_json
+
+        expect(response.status).to eq(200)
+      end
+
+      # TODO: uncomment when message queue implemented
+      # it "doesn't send draft dependencies to the message queue" do
+      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      #     .with(a_hash_including(base_path:), event_type: "major")
+      #   expect(PublishingAPI.service(:queue_publisher)).to_not receive(:send_message)
+      #     .with(a_hash_including(base_path: "/foo"), event_type: anything)
+
+      #   post request_path, params: {}.to_json
+
+      #   expect(response.status).to eq(200)
+      # end
+    end
+
+    it "sends to the live content store" do
+      allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item).with(anything)
+      expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        .with(
+          base_path:,
+          content_item: a_hash_including(
+            content_id:,
+            payload_version: anything,
+          ),
+        )
+
+      post request_path, params: {}.to_json
+
+      expect(response.status).to eq(200)
     end
 
     context "with a 'previous_version' which matches the current lock version of the draft item" do
@@ -571,9 +633,7 @@ RSpec.describe "/content", type: :request do
     end
 
     context "when publishing a draft which has a different content_id to the published edition on the same base_path" do
-      let(:draft_document) { create(:document, stale_lock_version: 3) }
       let(:live_document) { create(:document, stale_lock_version: 5) }
-      let(:request_path) { "/content/#{draft_document.content_id}/publish" }
 
       before do
         stub_request(:put, %r{.*content-store.*/content/.*})
@@ -581,12 +641,6 @@ RSpec.describe "/content", type: :request do
 
       context "when both editions are 'regular' editions" do
         before do
-          create(
-            :draft_edition,
-            document: draft_document,
-            base_path:,
-          )
-
           create(
             :live_edition,
             document: live_document,
