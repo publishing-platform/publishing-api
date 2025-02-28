@@ -671,7 +671,6 @@ RSpec.describe "/content", type: :request do
         it "returns a 422" do
           post request_path, params: {}.to_json
 
-          puts parsed_response
           expect(response.status).to eq(422)
         end
 
@@ -864,6 +863,156 @@ RSpec.describe "/content", type: :request do
       context "with an alternative_path payload" do
         let(:redirect_params) { redirect_params_with_alternative_path }
         it_behaves_like "unpublishing with redirects"
+      end
+    end
+
+    describe "gone (remove the content)" do
+      let(:gone_params) do
+        {
+          type: "gone",
+          explanation: "Test gone",
+          alternative_path: "/new-path",
+        }.to_json
+      end
+      let(:gone_response) do
+        {
+          base_path:,
+          content_item: {
+            base_path:,
+            document_type: "gone",
+            schema_name: "gone",
+            publishing_app: edition.publishing_app,
+            details: {
+              explanation: "Test gone",
+              alternative_path: "/new-path",
+            },
+            routes: [
+              {
+                path: base_path,
+                type: "exact",
+              },
+            ],
+            payload_version: anything,
+            public_updated_at: anything,
+          },
+        }
+      end
+
+      it "creates an Unpublishing" do
+        post request_path, params: gone_params
+
+        expect(response.status).to eq(200)
+
+        unpublishing = Unpublishing.find_by(edition:)
+        expect(unpublishing.type).to eq("gone")
+        expect(unpublishing.explanation).to eq("Test gone")
+        expect(unpublishing.alternative_path).to eq("/new-path")
+      end
+
+      it "sends an unpublishing to the live content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+            .with(gone_response)
+
+          post request_path, params: gone_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      it "sends an unpublishing to the draft content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+            .with(gone_response)
+
+          post request_path, params: gone_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      # TODO: uncomment when message queue implemented
+      # it "sends to the message queue" do
+      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      #     .with(
+      #       a_hash_including(
+      #         document_type: "gone",
+      #         content_id:,
+      #         details: a_hash_including(alternative_path: "/new-path"),
+      #       ),
+      #       event_type: "unpublish",
+      #     )
+
+      #   post request_path, params: gone_params
+
+      #   expect(response.status).to eq(200)
+      # end
+    end
+
+    describe "vanish (gone like it never existed)" do
+      let(:vanish_params) do
+        {
+          type: "vanish",
+        }.to_json
+      end
+
+      it "creates an Unpublishing" do
+        post request_path, params: vanish_params
+
+        expect(response.status).to eq(200)
+
+        unpublishing = Unpublishing.find_by(edition:)
+        expect(unpublishing.type).to eq("vanish")
+      end
+
+      it "deletes the content from the live content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:live_content_store)).to receive(:delete_content_item)
+            .with(base_path)
+
+          post request_path, params: vanish_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      it "deletes the content from the draft content store" do
+        Timecop.freeze do
+          expect(PublishingApi.service(:draft_content_store)).to receive(:delete_content_item)
+            .with(base_path)
+
+          post request_path, params: vanish_params
+
+          expect(response.status).to eq(200)
+        end
+      end
+
+      # TODO: uncomment when message queue implemented
+      # it "sends to the message queue" do
+      #   allow(PublishingApi.service(:live_content_store)).to receive(:delete_content_item)
+      #   allow(PublishingApi.service(:draft_content_store)).to receive(:delete_content_item)
+      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      #     .with(
+      #       a_hash_including(document_type: "vanish"),
+      #       event_type: "unpublish",
+      #     )
+
+      #   post request_path, params: vanish_params
+
+      #   expect(response.status).to eq(200)
+      # end
+    end
+
+    describe "a bad unpublishing type" do
+      it "422s" do
+        post request_path,
+             params: {
+               type: "not-correct",
+             }.to_json
+
+        expect(response.status).to eq(422)
       end
     end
   end
