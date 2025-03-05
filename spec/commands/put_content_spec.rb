@@ -228,5 +228,18 @@ RSpec.describe Commands::PutContent do
         described_class.call(payload)
       end
     end
+
+    context "when content is pathless" do
+      context "and schema requires a base_path" do
+        before do
+          payload.delete(:base_path)
+        end
+        it "raises an error" do
+          expect {
+            described_class.call(payload)
+          }.to raise_error(CommandError, /The payload did not conform to the schema/)
+        end
+      end
+    end
   end
 end

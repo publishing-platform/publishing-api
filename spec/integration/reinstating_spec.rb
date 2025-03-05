@@ -13,6 +13,7 @@ RSpec.describe "Reinstating editions that were previously unpublished" do
       rendering_app: "frontend",
       document_type: "answer",
       schema_name: "answer",
+      details: {},
       routes: [{ path: "/vat-rates", type: "exact" }],
       phase: "beta",
       update_type: "minor",
@@ -29,13 +30,9 @@ RSpec.describe "Reinstating editions that were previously unpublished" do
     {
       content_id: SecureRandom.uuid,
       base_path: "/vat-rates",
-      destination: "/somewhere",
-      title: "Redirect Title",
       publishing_app: "publisher",
-      rendering_app: "frontend",
       document_type: "redirect",
       schema_name: "redirect",
-      routes: [],
       redirects: [{ path: "/vat-rates", type: "exact", destination: "/somewhere" }],
       phase: "beta",
       update_type: "minor",
@@ -48,12 +45,7 @@ RSpec.describe "Reinstating editions that were previously unpublished" do
     }
   end
 
-  let(:validator) do
-    instance_double(SchemaValidator, valid?: true, errors: [])
-  end
-
   before do
-    allow(SchemaValidator).to receive(:new).and_return(validator)
     stub_request(:any, /content-store/)
   end
 

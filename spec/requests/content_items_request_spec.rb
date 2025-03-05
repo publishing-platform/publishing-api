@@ -90,12 +90,56 @@ RSpec.describe "/content", type: :request do
     end
 
     context "with pagination params" do
-      it "responds with the edition" do
-        get "/content", params: { start: "0", page_size: "20" }
+      before do
+        5.times do |n|
+          create(
+            :draft_edition,
+            base_path: "/content-#{n}",
+            document_type: "nonexistent-schema",
+            schema_name: "nonexistent-schema",
+            public_updated_at: n.minutes.ago,
+          )
+        end
 
+        get "/content", params: { states: %w[draft], offset: "3", per_page: "2" }
+      end
+
+      it "responds successfully" do
         expect(response.status).to eq(200)
-        expect(parsed_response["results"].count).to eq(1)
-        expect(parsed_response["results"][0]["base_path"]).to eq("/foo")
+      end
+
+      it "responds with editions limited by page_size" do
+        results = parsed_response["results"]
+        expect(results.size).to eq(2)
+        expect(results.first["base_path"]).to eq("/content-3")
+        expect(results.last["base_path"]).to eq("/content-4")
+      end
+    end
+
+    context "without an order param" do
+      before do
+        5.times do |n|
+          create(
+            :draft_edition,
+            base_path: "/content-#{n}",
+            document_type: "nonexistent-schema",
+            schema_name: "nonexistent-schema",
+            public_updated_at: n.minutes.ago,
+          )
+        end
+
+        get "/content", params: { states: %w[draft] }
+      end
+
+      it "responds successfully" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds by default with editions ordered by public_updated_at" do
+        results = parsed_response["results"]
+        expect(results.size).to eq(5)
+        expect(results.first["base_path"]).to eq("/content-0")
+        expect(results.last["base_path"]).to eq("/content-4")
       end
     end
 
