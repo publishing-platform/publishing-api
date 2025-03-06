@@ -385,21 +385,110 @@ RSpec.describe "/content", type: :request do
 
     context "with valid request params for a new edition" do
       before do
-        put request_path, params: content_item_params.to_json
+        Timecop.freeze(Time.zone.local(2017, 9, 1, 12, 0, 0))
       end
 
+      after do
+        Timecop.return
+      end
+
+      subject { Edition.last }
+
       it "responds with 200" do
+        put request_path, params: content_item_params.to_json
+
         expect(response.status).to eq(200)
       end
 
       it "responds with the new edition" do
-        new_edition = Edition.with_document.find_by!("documents.content_id": content_id)
+        put request_path, params: content_item_params.to_json
+
         presented_content_item = Presenters::Queries::ContentItemPresenter.present(
-          new_edition,
+          subject,
           include_warnings: true,
         )
 
         expect(response.body).to eq(presented_content_item.to_json)
+      end
+
+      it "creates an edition" do
+        put request_path, params: content_item_params.to_json
+
+        expect(subject).to be_present
+        expect(subject.document.content_id).to eq(content_id)
+        expect(subject.title).to eq(content_item_params[:title])
+      end
+
+      it "sets a draft state for the edition" do
+        put request_path, params: content_item_params.to_json
+        expect(subject.state).to eq("draft")
+      end
+
+      it "sets a user-facing version of 1 for the edition" do
+        put request_path, params: content_item_params.to_json
+        expect(subject.user_facing_version).to eq(1)
+      end
+
+      it "creates a lock version for the edition" do
+        put request_path, params: content_item_params.to_json
+        expect(subject.document.stale_lock_version).to eq(1)
+      end
+
+      it "has a major_published_at of nil" do
+        put request_path, params: content_item_params.to_json
+        expect(subject.major_published_at).to be_nil
+      end
+
+      it "sets last_edited_at to current time" do
+        put request_path, params: content_item_params.to_json
+        expect(subject.last_edited_at).to eq(Time.zone.now)
+      end
+
+      shared_examples "creates a change note" do
+        it "creates a change note" do
+          expect {
+            put request_path, params: payload.to_json
+          }.to change { ChangeNote.count }.by(1)
+        end
+      end
+
+      context "and first_published_at is present in the payload" do
+        let(:first_published_at) { Time.zone.now }
+        let(:payload) do
+          content_item_params.merge({ first_published_at: })
+        end
+
+        it "sets first_published_at to first_published_at" do
+          put request_path, params: payload.to_json
+
+          expect(subject.first_published_at).to eq(first_published_at)
+        end
+      end
+
+      context "and the change note is in the payload" do
+        let(:change_note) { "change note" }
+
+        let(:payload) do
+          content_item_params.merge!({ change_note: })
+        end
+
+        include_examples "creates a change note"
+      end
+
+      context "and the change history is in the details hash" do
+        let(:change_note) { "change note" }
+
+        let(:payload) do
+          content_item_params.merge!({
+            details: {
+              change_history: [
+                { note: change_note, public_timestamp: Time.zone.now.utc.rfc3339 },
+              ],
+            },
+          })
+        end
+
+        include_examples "creates a change note"
       end
 
       it "only sends to the draft content store" do
@@ -564,6 +653,240 @@ RSpec.describe "/content", type: :request do
         put request_path, params: content_item_params.to_json
 
         expect(response.status).to eq(200)
+      end
+    end
+
+    context "when the 'links' parameter is provided" do
+      let(:payload) do
+        content_item_params.merge!(
+          links: {
+            a_link_type: [link],
+          },
+        )
+      end
+
+      context "invalid UUID" do
+        let!(:link) { "not a UUID" }
+
+        it "should raise a validation error" do
+          put request_path, params: payload.to_json
+
+          expect(response.status).to eq(422)
+          expect(response.body).to match(/UUID/)
+        end
+      end
+
+      context "valid UUID" do
+        let(:document) { create(:document) }
+        let!(:link) { document.content_id }
+
+        it "should create a link" do
+          expect {
+            put request_path, params: payload.to_json
+          }.to change(Link, :count).by(1)
+
+          expect(Link.find_by(target_content_id: document.content_id)).to be
+        end
+      end
+
+      context "existing links" do
+        let(:document) { create(:document, content_id:) }
+        let(:link) { SecureRandom.uuid }
+
+        before do
+          edition.links.create!(target_content_id: document.content_id, link_type: "a_link_type")
+        end
+
+        context "draft edition" do
+          let(:edition) { create(:draft_edition, document:, base_path:) }
+
+          it "passes the old link to dependency resolution" do
+            expect(DownstreamDraftJob).to receive(:perform_async).with(
+              a_hash_including("orphaned_content_ids" => [content_id]),
+            )
+            put request_path, params: payload.to_json
+          end
+        end
+
+        context "published edition" do
+          let(:edition) { create(:live_edition, document:, base_path:) }
+
+          it "passes the old link to dependency resolution" do
+            expect(DownstreamDraftJob).to receive(:perform_async).with(
+              a_hash_including("orphaned_content_ids" => [content_id]),
+            )
+            put request_path, params: payload.to_json
+          end
+        end
+      end
+    end
+
+    context "when creating a draft for a previously unpublished edition" do
+      before do
+        Timecop.freeze(Time.zone.local(2017, 9, 1, 12, 0, 0))
+        create(
+          :unpublished_edition,
+          document: create(:document, content_id:, stale_lock_version: 2),
+          user_facing_version: 5,
+          base_path:,
+        )
+      end
+
+      after do
+        Timecop.return
+      end
+
+      it "creates the draft's lock version using the unpublished lock version as a starting point" do
+        put request_path, params: content_item_params.to_json
+
+        edition = Edition.last
+
+        expect(edition).to be_present
+        expect(edition.document.content_id).to eq(content_id)
+        expect(edition.state).to eq("draft")
+        expect(edition.document.stale_lock_version).to eq(3)
+      end
+
+      it "creates the draft's user-facing version using the unpublished user-facing version as a starting point" do
+        put request_path, params: content_item_params.to_json
+
+        edition = Edition.last
+
+        expect(edition).to be_present
+        expect(edition.document.content_id).to eq(content_id)
+        expect(edition.state).to eq("draft")
+        expect(edition.user_facing_version).to eq(6)
+      end
+    end
+
+    context "when creating a draft for a previously published edition" do
+      before do
+        stub_request(:put, %r{.*content-store.*/content/.*})
+        Timecop.freeze(Time.zone.local(2017, 9, 1, 12, 0, 0))
+      end
+
+      after do
+        Timecop.return
+      end
+
+      let(:first_published_at) { 1.year.ago }
+      let(:major_published_at) { 1.year.ago }
+
+      let(:document) do
+        create(
+          :document,
+          content_id:,
+          stale_lock_version: 5,
+        )
+      end
+
+      let!(:edition) do
+        create(
+          :live_edition,
+          document:,
+          user_facing_version: 5,
+          first_published_at:,
+          base_path:,
+          major_published_at:,
+        )
+      end
+
+      let!(:link) do
+        edition.links.create(
+          link_type: "test",
+          target_content_id: document.content_id,
+        )
+      end
+
+      it "creates the draft's user-facing version using the live's user-facing version as a starting point" do
+        put request_path, params: content_item_params.to_json
+
+        edition = Edition.last
+
+        expect(edition).to be_present
+        expect(edition.document.content_id).to eq(content_id)
+        expect(edition.state).to eq("draft")
+        expect(edition.user_facing_version).to eq(6)
+      end
+
+      it "sets first_published_at to the previously published version's value" do
+        payload = content_item_params
+        payload.delete(:first_published_at)
+
+        put request_path, params: payload.to_json
+
+        edition = Edition.last
+        expect(edition).to be_present
+        expect(edition.document.content_id).to eq(content_id)
+
+        expect(edition.first_published_at).to eq(first_published_at)
+      end
+
+      context "when first_published_at has changed in the payload" do
+        it "updates first_published_at" do
+          put request_path, params: content_item_params.to_json
+
+          edition = Edition.last
+          expect(edition.first_published_at).to eq(content_item_params[:first_published_at])
+        end
+      end
+
+      context "when update_type is minor" do
+        let(:payload) do
+          content_item_params.merge!({
+            update_type: "minor",
+          })
+        end
+
+        it "sets major_published_at to previous published edition's value" do
+          put request_path, params: payload.to_json
+
+          edition = Edition.last
+          expect(edition.major_published_at.iso8601)
+            .to eq(major_published_at.iso8601)
+        end
+      end
+
+      context "when the base path has changed" do
+        let(:payload) do
+          content_item_params.merge!({
+            base_path: "/moved",
+            routes: [{ path: "/moved", type: "exact" }],
+          })
+        end
+
+        it "sets the correct base path on the location" do
+          put request_path, params: payload.to_json
+
+          expect(Edition.where(base_path: "/moved", state: "draft")).to exist
+        end
+
+        it "creates a redirect" do
+          put request_path, params: payload.to_json
+
+          redirect = Edition.find_by(
+            base_path:,
+            state: "draft",
+          )
+
+          expect(redirect).to be_present
+          expect(redirect.schema_name).to eq("redirect")
+          expect(redirect.publishing_app).to eq("publisher")
+
+          expect(redirect.redirects).to eq([{
+            path: base_path,
+            type: "exact",
+            destination: "/moved",
+          }])
+
+          expect(redirect.document.owning_document).to eq(edition.document)
+        end
+
+        it "sends a create request to the draft content store for the redirect" do
+          expect(DownstreamDraftJob).to receive(:perform_async).twice
+
+          put request_path, params: payload.to_json
+        end
       end
     end
   end
