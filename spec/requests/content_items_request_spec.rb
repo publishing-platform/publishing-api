@@ -1196,5 +1196,75 @@ RSpec.describe "/content", type: :request do
         expect(response.status).to eq(422)
       end
     end
+
+    context "document is already unpublished" do
+      let!(:edition) do
+        create(
+          :unpublished_edition,
+          document:,
+          base_path: "/vat-rates",
+          explanation: "This explnatin has a typo",
+          alternative_path: "/new-path",
+        )
+      end
+
+      let(:payload) do
+        {
+          content_id:,
+          type: "gone",
+          explanation: "This explanation is correct",
+        }
+      end
+
+      it "maintains the state of unpublished" do
+        post request_path, params: payload.to_json
+        expect(edition.reload.state).to eq("unpublished")
+      end
+
+      it "updates the Unpublishing" do
+        unpublishing = Unpublishing.find_by(edition:)
+        expect(unpublishing.explanation).to eq("This explnatin has a typo")
+
+        post request_path, params: payload.to_json
+
+        unpublishing.reload
+
+        expect(unpublishing.explanation).to eq("This explanation is correct")
+        expect(unpublishing.alternative_path).to be_nil
+      end
+
+      it "sends an unpublishing to the draft content store" do
+        expect(DownstreamDraftJob).to receive(:perform_async)
+          .with(
+            a_hash_including("content_id" => content_id),
+          )
+
+        post request_path, params: payload.to_json
+      end
+
+      it "sends an unpublishing to the live content store" do
+        expect(DownstreamLiveJob).to receive(:perform_async)
+          .with(
+            a_hash_including("content_id" => content_id),
+          )
+
+        post request_path, params: payload.to_json
+      end
+
+      context "when the unpublishing type is substitute" do
+        let!(:edition) do
+          create(
+            :substitute_unpublished_edition,
+            document:,
+          )
+        end
+
+        it "rejects the request with a 404" do
+          post request_path, params: payload.to_json
+          expect(response.status).to eq(404)
+          expect(response.body).to match(/Could not find an edition to unpublish/)
+        end
+      end
+    end
   end
 end
