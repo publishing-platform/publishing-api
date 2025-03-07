@@ -424,7 +424,6 @@ DEPENDENCIES
   publishing_platform_schemas
   publishing_platform_sidekiq
   publishing_platform_sso
-  puma (>= 5.0)
   rails (= 7.2.2)
   rspec-rails
   sentry-sidekiq
