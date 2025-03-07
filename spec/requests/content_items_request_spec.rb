@@ -889,6 +889,241 @@ RSpec.describe "/content", type: :request do
         end
       end
     end
+
+    context "when the payload is for an already drafted edition" do
+      before do
+        stub_request(:put, %r{.*content-store.*/content/.*})
+        Timecop.freeze(Time.zone.local(2017, 9, 1, 12, 0, 0))
+      end
+
+      after do
+        Timecop.return
+      end
+
+      let(:document) do
+        create(:document, content_id:, stale_lock_version: 1)
+      end
+
+      let!(:previously_drafted_item) do
+        create(
+          :draft_edition,
+          document:,
+          base_path:,
+          title: "Old Title",
+          publishing_app: "publisher",
+          update_type: "major",
+        )
+      end
+
+      it "updates the edition" do
+        put request_path, params: content_item_params.to_json
+
+        previously_drafted_item.reload
+
+        expect(previously_drafted_item.title).to eq(content_item_params[:title])
+      end
+
+      it "keeps the content_store as draft" do
+        put request_path, params: content_item_params.to_json
+
+        previously_drafted_item.reload
+
+        expect(previously_drafted_item.content_store).to eq("draft")
+      end
+
+      it "sets last_edited_at to current time" do
+        put request_path, params: content_item_params.to_json
+
+        previously_drafted_item.reload
+
+        expect(previously_drafted_item.last_edited_at).to eq(Time.zone.now)
+      end
+
+      context "when public_updated_at is in the payload" do
+        let(:public_updated_at) { Time.zone.now }
+
+        let(:payload) do
+          content_item_params.merge!({
+            public_updated_at:,
+          })
+        end
+
+        it "allows the setting of public_updated_at" do
+          put request_path, params: payload.to_json
+
+          previously_drafted_item.reload
+
+          expect(previously_drafted_item.public_updated_at)
+            .to eq(public_updated_at)
+        end
+      end
+
+      context "when first_published_at is in the payload" do
+        let(:first_published_at) { Time.zone.parse("2016-5-23 1:00").rfc3339 }
+
+        let(:payload) do
+          content_item_params.merge!({
+            first_published_at:,
+          })
+        end
+
+        it "allows the setting of first_published_at and publisher_first_published_at" do
+          put request_path, params: payload.to_json
+
+          expect(previously_drafted_item.reload.first_published_at)
+            .to eq(first_published_at)
+        end
+      end
+
+      it "does not increment the user-facing version for the edition" do
+        put request_path, params: content_item_params.to_json
+
+        previously_drafted_item.reload
+
+        expect(previously_drafted_item.user_facing_version).to eq(1)
+      end
+
+      it "increments the lock version for the document" do
+        put request_path, params: content_item_params.to_json
+
+        expect(document.reload.stale_lock_version).to eq(2)
+      end
+
+      context "when the base path has changed" do
+        before do
+          previously_drafted_item.update!(
+            routes: [{ path: "/old-path", type: "exact" }, { path: "/old-path.atom", type: "exact" }],
+            base_path: "/old-path",
+          )
+        end
+
+        it "updates the location's base path" do
+          put request_path, params: content_item_params.to_json
+          previously_drafted_item.reload
+
+          expect(previously_drafted_item.base_path).to eq(base_path)
+        end
+
+        context "when there is a draft at the new base path" do
+          let!(:substitute_item) do
+            create(
+              :draft_edition,
+              base_path:,
+              title: "Substitute Content",
+              publishing_app: "publisher",
+              document_type: "coming_soon",
+            )
+          end
+
+          it "deletes the substitute item" do
+            put request_path, params: content_item_params.to_json
+            expect(Edition.exists?(id: substitute_item.id)).to eq(false)
+          end
+
+          context "conflicting version" do
+            before do
+              previously_drafted_item.document.update!(stale_lock_version: 2)
+            end
+
+            let(:payload) do
+              content_item_params.merge!({
+                previous_version: "1",
+              })
+            end
+
+            it "doesn't delete the substitute item" do
+              put request_path, params: payload.to_json
+
+              expect(response.status).to eq(409)
+              expect(response.body).to match(/lock-version conflict/)
+              expect(Edition.exists?(id: substitute_item.id)).to eq(true)
+            end
+          end
+        end
+      end
+
+      context "with a 'previous_version' which does not match the current lock_version of the draft item" do
+        before do
+          previously_drafted_item.document.update!(stale_lock_version: 2)
+        end
+
+        let(:payload) do
+          content_item_params.merge!({
+            previous_version: "1",
+          })
+        end
+
+        it "raises an error" do
+          put request_path, params: payload.to_json
+
+          expect(response.status).to eq(409)
+          expect(response.body).to match(/lock-version conflict/)
+        end
+      end
+
+      context "when some of the attributes are not provided in the payload" do
+        before do
+          payload.delete(:redirects)
+          payload.delete(:phase)
+        end
+
+        let(:payload) do
+          content_item_params.merge!({})
+        end
+
+        it "resets those attributes to their defaults from the database" do
+          put request_path, params: payload.to_json
+          edition = Edition.last
+
+          expect(edition.redirects).to eq([])
+          expect(edition.phase).to eq("live")
+        end
+      end
+
+      context "when the auth_bypass_ids has been updated" do
+        let(:auth_bypass_ids) { [SecureRandom.uuid] }
+
+        let(:payload) do
+          content_item_params.merge!({
+            auth_bypass_ids:,
+          })
+        end
+
+        it "updates the edition with auth_bypass_ids params" do
+          put request_path, params: payload.to_json
+          expect(Edition.last.auth_bypass_ids).to eq(auth_bypass_ids)
+        end
+      end
+
+      context "when the change note has been updated" do
+        let(:change_note) { "updated note" }
+
+        let(:payload) do
+          content_item_params.merge!({
+            change_note:,
+          })
+        end
+
+        it "updates the change note" do
+          expect { put request_path, params: payload.to_json }
+            .to change { previously_drafted_item.change_note.reload.note }
+            .from("note").to(change_note)
+        end
+      end
+
+      context "when the change note has been removed" do
+        let(:payload) do
+          content_item_params.merge!({
+            update_type: "minor",
+          })
+        end
+
+        it "removes the change note" do
+          expect { put request_path, params: payload.to_json }
+            .to change(ChangeNote, :count).by(-1)
+        end
+      end
+    end
   end
 
   describe "POST /publish" do
