@@ -28,10 +28,7 @@ class Edition < ApplicationRecord
   NON_RENDERABLE_FORMATS = %w[redirect gone].freeze
   NO_RENDERING_APP_FORMATS = %w[].freeze
 
-  enum content_store: {
-    draft: "draft",
-    live: "live",
-  }
+  enum :content_store, { draft: "draft", live: "live" }
 
   belongs_to :document
   has_one :unpublishing
