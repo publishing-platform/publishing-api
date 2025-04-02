@@ -1,0 +1,45 @@
+{
+  "base_path": "/organisations/digital-services",
+  "content_id": "af07d5a5-df63-4ddc-9383-6a666845ebe9",
+  "description": null,
+  "details": {
+    "abbreviation": "DS",
+    "organisation_type": "department",
+    "status": "live"
+  },
+  "document_type": "organisation",
+  "first_published_at": "2025-02-13T09:13:45Z",
+  "links": {
+    "primary_publishing_organisation": [
+      {
+        "api_path": "/api/content/organisations/digital-services",
+        "api_url": "http://www.dev.publishing-platform.co.uk/api/content/organisations/digital-services",
+        "base_path": "/organisations/digital-services",
+        "content_id": "af07d5a5-df63-4ddc-9383-6a666845ebe9",
+        "details": {
+          "abbreviation": "DS",
+          "status": "live"
+        },
+        "document_type": "organisation",
+        "links": {
+
+        },
+        "schema_name": "organisation",
+        "title": "Digital Services",
+        "web_url": "http://www.dev.publishing-platform.co.uk/organisations/digital-services",
+        "withdrawn": false
+      }
+    ]
+  },
+  "phase": "live",
+  "public_updated_at": "2025-03-24T21:40:24Z",
+  "publishing_app": "organisations-publisher",
+  "publishing_request_id": "30073-1588319891.535-10.13.4.55-540",
+  "rendering_app": "collections-frontend",
+  "schema_name": "organisation",
+  "title": "Digital Services",
+  "updated_at": "2025-04-02T15:27:16Z",
+  "withdrawn_notice": {
+
+  }
+}
