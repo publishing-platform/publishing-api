@@ -1,0 +1,34 @@
+{
+  "base_path": "/organisations",
+  "content_id": "fde62e52-dfb6-42ae-b336-2c4faf068101",
+  "description": "Information from departments and other organisations, including news, campaigns, policies and contact details.",
+  "details": {
+    "ordered_departments": [
+      {
+        "abbreviation": "DS",
+        "content_id": "af07d5a5-df63-4ddc-9383-6a666845ebe9",
+        "href": "/organisations/digital-services",
+        "organisation_type": "department",
+        "slug": "digital-services",
+        "status": "live",
+        "title": "Digital Services"
+      }
+    ]
+  },
+  "document_type": "finder",
+  "first_published_at": "2025-02-12T17:01:00Z",
+  "links": {
+
+  },
+  "phase": "live",
+  "public_updated_at": "2025-03-24T21:40:25Z",
+  "publishing_app": "organisations-publisher",
+  "publishing_request_id": "21-1743602630.591-10.13.22.166-14355",
+  "rendering_app": "collections-frontend",
+  "schema_name": "organisations_homepage",
+  "title": "Departments and other organisations",
+  "updated_at": "2025-04-02T15:11:07Z",
+  "withdrawn_notice": {
+
+  }
+}
