@@ -1,0 +1,29 @@
+{
+  "title": "Test answer",
+  "base_path": "/test-answer",
+  "description": "Test answer description",
+  "schema_name": "answer",
+  "document_type": "answer",
+  "public_updated_at": "2015-05-28T16:46:51.000+01:00",
+  "publishing_app": "publisher",
+  "rendering_app": "frontend",  
+  "routes": [
+    {
+      "path": "/test-answer",
+      "type": "exact"
+    },
+    {
+      "path": "/test-answer.json",
+      "type": "exact"
+    }
+  ],  
+  "update_type": "minor",
+  "details": {
+    "body": [
+      {
+        "content_type": "text/markdown",
+        "content": "# Test Heading 1\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nProin eget metus ornare, vulputate dolor eget, auctor purus."
+      }    
+    ]
+  }
+}

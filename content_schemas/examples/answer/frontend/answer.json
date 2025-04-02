@@ -1,0 +1,43 @@
+{
+  "base_path": "/test-answer",
+  "content_id": "0d09ecf6-04d2-4ef1-90c2-09e51ecbc96f",
+  "description": "Test answer description",
+  "details": {
+    "body": "<h1 id=\"test-heading-1\">Test Heading 1</h1>\n\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>\n\n<p>Proin eget metus ornare, vulputate dolor eget, auctor purus.</p>\n"
+  },
+  "document_type": "answer",
+  "first_published_at": "2025-04-02T15:17:21Z",
+  "links": {
+    "primary_publishing_organisation": [
+      {
+        "api_path": "/api/content/organisations/digital-services",
+        "api_url": "http://www.dev.publishing-platform.co.uk/api/content/organisations/digital-services",
+        "base_path": "/organisations/digital-services",
+        "content_id": "af07d5a5-df63-4ddc-9383-6a666845ebe9",
+        "details": {
+          "abbreviation": "DS",
+          "status": "live"
+        },
+        "document_type": "organisation",
+        "links": {
+
+        },
+        "schema_name": "organisation",
+        "title": "Digital Services",
+        "web_url": "http://www.dev.publishing-platform.co.uk/organisations/digital-services",
+        "withdrawn": false
+      }
+    ]
+  },
+  "phase": "live",
+  "public_updated_at": "2015-05-28T15:46:51.000+00:00",
+  "publishing_app": "publisher",
+  "publishing_request_id": null,
+  "rendering_app": "frontend",
+  "schema_name": "answer",
+  "title": "Test answer",
+  "updated_at": "2017-02-09T14:34:06.890Z",
+  "withdrawn_notice": {
+
+  }  
+}
