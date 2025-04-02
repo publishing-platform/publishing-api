@@ -38,6 +38,20 @@ task validate_examples: :environment do
   puts "✔︎"
 end
 
+desc "JSON format examples"
+task format_examples: :environment do
+  print "Formatting examples: "
+
+  Dir.glob("examples/**/*.json").each do |example_path|
+    print "."
+    example = JSON.parse(File.read(example_path))
+    pretty_json = JSON.pretty_generate(example)
+    File.write(example_path, "#{pretty_json}\n")
+  end
+
+  puts "✔︎"
+end
+
 desc "Validate links"
 task :validate_links, [:files] => :environment do |_, args|
   print "Validating links... "
