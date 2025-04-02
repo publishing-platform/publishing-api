@@ -1,0 +1,19 @@
+{
+  "base_path": "/api/content",
+  "document_type": "special_route",
+  "schema_name": "special_route",
+  "title": "Content API",
+  "description": "API exposing all content on Publishing Platform.",
+  "details": {
+  },
+  "routes": [
+    {
+      "path": "/api/content",
+      "type": "prefix"
+    }
+  ],
+  "publishing_app": "publishing-api",
+  "rendering_app": "content-store",
+  "public_updated_at": "2025-02-13T13:58:11+00:00",
+  "update_type": "major"
+}

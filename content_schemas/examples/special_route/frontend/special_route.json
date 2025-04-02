@@ -1,0 +1,24 @@
+{
+  "base_path": "/api/content",
+  "content_id": "16ca5ac1-7df5-4137-9f83-0270fcfc8bb5",
+  "description": "API exposing all content on Publishing Platform.",
+  "details": {
+
+  },
+  "document_type": "special_route",
+  "first_published_at": "2025-02-13T22:16:40Z",
+  "links": {
+
+  },
+  "phase": "live",
+  "public_updated_at": "2025-02-13T13:58:11+00:00",
+  "publishing_app": "publishing-api",
+  "publishing_request_id": "21-1696943400.771-10.13.26.155-382",
+  "rendering_app": "content-store",
+  "schema_name": "special_route",
+  "title": "Content API",
+  "updated_at": "2025-02-13T22:16:40Z",
+  "withdrawn_notice": {
+
+  }
+}
