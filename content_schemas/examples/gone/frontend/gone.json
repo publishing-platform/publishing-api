@@ -1,0 +1,24 @@
+{
+  "base_path": "/testing-gone",
+  "content_id": null,
+  "description": null,
+  "details": {
+    "alternative_path": "",
+    "explanation": "<div><p>Incorrect title</p></div>"
+  },
+  "document_type": "gone",
+  "links": {
+
+  },
+  "phase": "live",
+  "public_updated_at": "2025-03-19T17:50:07Z",
+  "publishing_app": "publisher",
+  "publishing_request_id": null,
+  "rendering_app": null,
+  "schema_name": "gone",
+  "title": null,
+  "updated_at": "2025-04-02T15:11:07Z",
+  "withdrawn_notice": {
+
+  }
+}
