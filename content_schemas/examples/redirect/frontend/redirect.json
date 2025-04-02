@@ -1,0 +1,31 @@
+{
+  "base_path": "/test-redirect",
+  "content_id": null,
+  "description": null,
+  "details": {
+
+  },
+  "document_type": "redirect",
+  "first_published_at": "2024-08-28T16:21:11Z",
+  "links": {
+
+  },
+  "phase": "live",
+  "public_updated_at": "2024-08-28T16:21:11Z",
+  "publishing_app": "publisher",
+  "publishing_request_id": "30559-1487239320.697-62.232.86.100-23977",
+  "redirects": [
+    {
+      "destination": "/test-redirected?query=answer#fragment",
+      "path": "/test-redirect",
+      "type": "exact"
+    }
+  ],
+  "rendering_app": null,
+  "schema_name": "redirect",
+  "title": null,
+  "updated_at": "2024-08-28T16:21:11Z",
+  "withdrawn_notice": {
+
+  }
+}

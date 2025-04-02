@@ -1,0 +1,15 @@
+{
+  "base_path": "/test-redirect",
+  "publishing_app": "publisher",
+  "public_updated_at": "2024-08-28T16:21:11Z",
+  "redirects": [
+    {
+      "path": "/test-redirect",
+      "type": "exact",
+      "destination": "/test-redirected?query=answer#fragment"
+    }
+  ],
+  "document_type": "redirect",
+  "schema_name": "redirect",
+  "update_type": "major"
+}
