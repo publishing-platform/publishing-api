@@ -1,0 +1,19 @@
+{
+  "base_path": "/",
+  "document_type": "homepage",
+  "schema_name": "homepage",
+  "title": "Publishing Platform homepage",
+  "description": "",
+  "details": {
+  },
+  "routes": [
+    {
+      "path": "/",
+      "type": "exact"
+    }
+  ],
+  "publishing_app": "publishing-api",
+  "rendering_app": "frontend",
+  "public_updated_at": "2015-07-30T13:58:11+00:00",
+  "update_type": "major"
+}

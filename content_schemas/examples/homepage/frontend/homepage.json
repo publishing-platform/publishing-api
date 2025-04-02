@@ -1,0 +1,24 @@
+{
+  "base_path": "/",
+  "content_id": "f3bbdec2-0e62-4520-a7fd-6ffd5d36e03a",
+  "description": "",
+  "details": {
+
+  },
+  "document_type": "homepage",
+  "first_published_at": "2016-02-26T11:53:52+00:00",
+  "links": {
+
+  },
+  "phase": "live",
+  "public_updated_at": "2015-07-30T13:58:11+00:00",
+  "publishing_app": "publishing-api",
+  "publishing_request_id": "21-1687944754.231-10.13.31.76-382",
+  "rendering_app": "frontend",
+  "schema_name": "homepage",
+  "title": "Publishing Platform homepage",
+  "updated_at": "2025-02-13T22:14:38Z",
+  "withdrawn_notice": {
+
+  }
+}
