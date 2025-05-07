@@ -20,6 +20,7 @@ gem "tzinfo-data", platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 gem "with_advisory_lock"
 
 group :development, :test do
+  gem "brakeman"
   gem "debug", platforms: %i[mri mswin mswin64 mingw x64_mingw]
   gem "factory_bot_rails"
   gem "publishing_platform_rubocop"
