@@ -10,6 +10,12 @@ on:
   pull_request:
 
 jobs:
+  codeql-sast:
+    name: CodeQL SAST scan
+    uses: publishing-platform/publishing-platform-infrastructure/.github/workflows/codeql-analysis.yml@main
+    permissions:
+      security-events: write
+
   security-analysis:
     name: Security Analysis
     uses: publishing-platform/publishing-platform-infrastructure/.github/workflows/brakeman.yml@main
