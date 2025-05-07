@@ -21,13 +21,13 @@ jobs:
   #     actions: read
 
   # Requires Github Advanced Security for private repositories
-  
+
   # dependency-review:
   #   name: Dependency Review scan
   #   uses: publishing-platform/publishing-platform-infrastructure/.github/workflows/dependency-review.yml@main
 
   security-analysis:
-    name: Security Analysis
+  name: Security Analysis
     uses: publishing-platform/publishing-platform-infrastructure/.github/workflows/brakeman.yml@main
     secrets: inherit
     permissions:
