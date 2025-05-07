@@ -41,7 +41,7 @@ jobs:
 
   test-ruby:
     name: Test Ruby
-    runs-on: linux-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Postgres
         id: setup-postgres
