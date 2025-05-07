@@ -14,6 +14,7 @@ jobs:
     name: CodeQL SAST scan
     uses: publishing-platform/publishing-platform-infrastructure/.github/workflows/codeql-analysis.yml@main
     permissions:
+      contents: read
       security-events: write
 
   security-analysis:
