@@ -1,0 +1,26 @@
+defaults: &defaults
+  port: 5672
+  vhost: /
+  user: publishing_api
+  pass: publishing_api
+  exchange: published_documents
+  recover_from_connection_close: true
+  automatically_recover: false
+
+development:
+  <<: *defaults
+  host: localhost
+
+test:
+  <<: *defaults
+  host: localhost
+  exchange: published_documents_test
+
+production:
+  <<: *defaults
+  hosts:
+    <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
+    <% hosts.split(",").each do |host| %>
+    - <%= host %>
+    <% end %>
+  pass: <%= ENV['RABBITMQ_PASSWORD'] %>
