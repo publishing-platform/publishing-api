@@ -1,4 +1,10 @@
 {
+  publishing_platform_request_id: {
+    type: [
+      "string",
+      "null"
+    ]
+  },  
   description: {
     type: "string",
   },

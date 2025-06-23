@@ -3,6 +3,7 @@ require "schema_generator/schema"
 require "schema_generator/publisher_content_schema_generator"
 require "schema_generator/publisher_links_schema_generator"
 require "schema_generator/frontend_schema_generator"
+require "schema_generator/notification_schema_generator"
 require "schema_generator/format"
 require "schema_generator/definitions_resolver"
 require "schema_generator/expanded_links"
@@ -26,6 +27,13 @@ module SchemaGenerator
           format, global_definitions
         ).generate
         Schema.write("content_schemas/dist/formats/#{schema_name}/publisher/links.json", publisher_links_schema)
+      end
+
+      if format.generate_notification?
+        notification_schema = NotificationSchemaGenerator.new(
+          format, global_definitions
+        ).generate
+        Schema.write("content_schemas/dist/formats/#{schema_name}/notification/schema.json", notification_schema)
       end
 
       if format.generate_frontend?

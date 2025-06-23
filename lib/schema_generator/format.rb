@@ -99,6 +99,11 @@ module SchemaGenerator
       generate_publisher.nil? || generate_publisher
     end
 
+    def generate_notification?
+      generate_notification = format_data.dig("generate", "notification")
+      generate_notification.nil? || generate_notification
+    end
+
     def generate_frontend?
       generate = format_data.dig("generate", "frontend")
       generate = true if generate.nil?
