@@ -205,7 +205,7 @@ GEM
     psych (5.2.6)
       date
       stringio
-    public_suffix (6.0.1)
+    public_suffix (6.0.2)
     publishing_platform_api_adapters (0.10.0)
       addressable
       link_header
@@ -227,7 +227,7 @@ GEM
       rubocop-rails (= 2.32.0)
       rubocop-rake (= 0.7.1)
       rubocop-rspec (= 3.6.0)
-    publishing_platform_schemas (0.3.0)
+    publishing_platform_schemas (0.4.0)
       json-schema (>= 2.8, < 5.2)
     publishing_platform_sidekiq (0.5.0)
       publishing_platform_api_adapters
