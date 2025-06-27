@@ -92,7 +92,9 @@ module Commands
       end
 
       if document.live
-        DownstreamLiveJob.perform_async(params)
+        DownstreamLiveJob.perform_async(params.merge({
+          "message_queue_event_type" => "links",
+        }))
       end
     end
 

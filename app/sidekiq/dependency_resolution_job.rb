@@ -82,6 +82,7 @@ private
     DownstreamLiveJob.perform_async(
       worker_params.merge({
         "content_id" => dependent_content_id,
+        "message_queue_event_type" => "links",
       }),
     )
   end

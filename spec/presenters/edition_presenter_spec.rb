@@ -6,73 +6,68 @@ RSpec.describe Presenters::EditionPresenter do
   let(:details) { { body: "<p>Text</p>\n", change_history: [change_history] } }
   let(:payload_version) { 1 }
 
-  # TODO: uncomment when message queue implemented
-  # describe "#for_message_queue" do
-  #   let(:update_type) { "minor" }
-  #   let(:edition) do
-  #     create(
-  #       :live_edition,
-  #       update_type:,
-  #       schema_name: "calendar",
-  #       document_type: "calendar",
-  #       auth_bypass_ids: [],
-  #     )
-  #   end
+  describe "#for_message_queue" do
+    let(:update_type) { "minor" }
+    let(:edition) do
+      create(
+        :live_edition,
+        update_type:,
+        schema_name: "answer",
+        document_type: "answer",
+        auth_bypass_ids: [],
+      )
+    end
 
-  #   subject(:result) do
-  #     described_class.new(
-  #       edition, draft: present_drafts
-  #     ).for_message_queue(payload_version)
-  #   end
+    subject(:result) do
+      described_class.new(
+        edition, draft: present_drafts
+      ).for_message_queue(payload_version)
+    end
 
-  #   it "mixes in the specified update_type to the presentation" do
-  #     expect(subject[:update_type]).to eq update_type
-  #   end
+    it "mixes in the specified update_type to the presentation" do
+      expect(subject[:update_type]).to eq update_type
+    end
 
-  #   it "adds the supertypes" do
-  #     expect(subject["user_journey_document_supertype"]).to eq "thing"
-  #   end
+    it "includes the version" do
+      expect(subject[:payload_version]).to eq 1
+    end
 
-  #   it "includes the version" do
-  #     expect(subject[:payload_version]).to eq 1
-  #   end
+    it "matches the notification schema" do
+      expect(subject).to be_valid_against_notification_schema("answer")
+    end
 
-  #   it "matches the notification schema" do
-  #     expect(subject).to be_valid_against_notification_schema("calendar")
-  #   end
+    it "doesnt include auth_bypass_ids in message queue" do
+      expect(subject).to_not include(auth_bypass_ids: [])
+    end
 
-  #   it "doesnt include auth_bypass_ids in message queue" do
-  #     expect(subject).to_not include(auth_bypass_ids: [])
-  #   end
+    context "when there are links" do
+      let!(:taxons_link) do
+        create(
+          :link,
+          target_content_id: SecureRandom.uuid,
+          link_set: create(:link_set, content_id: edition.content_id),
+          link_type: "taxons",
+        )
+      end
 
-  #   context "when there are links" do
-  #     let!(:taxons_link) do
-  #       create(
-  #         :link,
-  #         target_content_id: SecureRandom.uuid,
-  #         link_set: create(:link_set, content_id: edition.content_id),
-  #         link_type: "taxons",
-  #       )
-  #     end
+      let!(:editions_link) do
+        create(
+          :link,
+          target_content_id: SecureRandom.uuid,
+          link_set: nil,
+          edition:,
+          link_type: "editions",
+        )
+      end
 
-  #     let!(:editions_link) do
-  #       create(
-  #         :link,
-  #         target_content_id: SecureRandom.uuid,
-  #         link_set: nil,
-  #         edition:,
-  #         link_type: "editions",
-  #       )
-  #     end
-
-  #     it "presents the unexpanded links" do
-  #       expect(subject[:links]).to match(
-  #         taxons: [taxons_link.target_content_id],
-  #         editions: [editions_link.target_content_id],
-  #       )
-  #     end
-  #   end
-  # end
+      it "presents the unexpanded links" do
+        expect(subject[:links]).to match(
+          taxons: [taxons_link.target_content_id],
+          editions: [editions_link.target_content_id],
+        )
+      end
+    end
+  end
 
   describe "#for_content_store" do
     subject(:result) do

@@ -35,6 +35,14 @@ module Presenters
       present.merge(payload_version:)
     end
 
+    def for_message_queue(payload_version)
+      present.merge(
+        content_id:,
+        publishing_platform_request_id: PublishingPlatformApi::PublishingPlatformHeaders.headers[:publishing_platform_request_id],
+        payload_version:,
+      )
+    end
+
     def for_redirect_helper(content_id)
       present.merge(content_id:, update_type: "major")
     end

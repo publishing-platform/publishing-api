@@ -113,11 +113,10 @@ RSpec.describe Commands::DiscardDraft do
         described_class.call(payload)
       end
 
-      # TODO: uncomment when message queue implemented
-      # it "does not send any messages on the message queue" do
-      #   expect(PublishingAPI.service(:queue_publisher)).not_to receive(:send_message)
-      #   described_class.call(payload)
-      # end
+      it "does not send any messages on the message queue" do
+        expect(PublishingApi.service(:queue_publisher)).not_to receive(:send_message)
+        described_class.call(payload)
+      end
 
       context "when the draft's lock version differs from the given lock version" do
         before do

@@ -25,6 +25,14 @@ class Presenters::GonePresenter
     present.merge(payload_version:)
   end
 
+  def for_message_queue(payload_version)
+    present.merge(
+      content_id:,
+      publishing_platform_request_id: PublishingPlatformApi::PublishingPlatformHeaders.headers[:publishing_platform_request_id],
+      payload_version:,
+    )
+  end
+
 private
 
   attr_reader :base_path, :content_id, :publishing_app, :public_updated_at, :alternative_path, :explanation, :routes

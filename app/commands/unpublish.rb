@@ -126,6 +126,7 @@ module Commands
         "content_id" => document.content_id,
         "update_dependencies" => true,
         "orphaned_content_ids" => orphaned_content_ids,
+        "message_queue_event_type" => "unpublish",
         "source_command" => "unpublish",
       )
     end

@@ -156,6 +156,7 @@ module Commands
 
     def live_worker_params
       worker_params.merge(
+        "message_queue_event_type" => edition.update_type,
         "orphaned_content_ids" => orphaned_content_ids,
       )
     end

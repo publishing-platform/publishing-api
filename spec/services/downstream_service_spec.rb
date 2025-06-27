@@ -177,42 +177,40 @@ RSpec.describe DownstreamService do
     end
   end
 
-  # TODO: uncomment when message queue implemented
-  # describe ".broadcast_to_message_queue" do
-  #   let(:update_type) { "major" }
-  #   let(:state) { "published" }
+  describe ".broadcast_to_message_queue" do
+    let(:update_type) { "major" }
+    let(:state) { "published" }
 
-  #   {
-  #     "draft" => true,
-  #     "published" => false,
-  #     "unpublished" => false,
-  #     "superseded" => true,
-  #   }.each do |state, should_error|
-  #     context "#{state} item" do
-  #       let(:state) { state }
+    {
+      "draft" => true,
+      "published" => false,
+      "unpublished" => false,
+      "superseded" => true,
+    }.each do |state, should_error|
+      context "#{state} item" do
+        let(:state) { state }
 
-  #       if should_error
-  #         it "should raise a DownstreamInvalidStateError" do
-  #           expect {
-  #             DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
-  #           }.to raise_error(DownstreamInvalidStateError)
-  #         end
-  #       else
-  #         it "should not raise an error" do
-  #           expect {
-  #             DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
-  #           }.to_not raise_error
-  #         end
-  #       end
-  #     end
-  #   end
+        if should_error
+          it "should raise a DownstreamInvalidStateError" do
+            expect {
+              DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
+            }.to raise_error(DownstreamInvalidStateError)
+          end
+        else
+          it "should not raise an error" do
+            expect {
+              DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
+            }.to_not raise_error
+          end
+        end
+      end
+    end
 
-  #   # TODO: uncomment when message queue implemented
-  #   # it "sends a message to the message queue" do
-  #   #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-  #   #   DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
-  #   # end
-  # end
+    it "sends a message to the message queue" do
+      expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      DownstreamService.broadcast_to_message_queue(downstream_payload, update_type)
+    end
+  end
 
   describe ".discard_from_draft_content_store" do
     context "nil base path" do

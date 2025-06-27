@@ -25,19 +25,18 @@ RSpec.describe "Logging", type: :request do
       })
   end
 
-  # TODO: uncomment when message queue implemented
-  # it "adds a request uuid to the message bus" do
-  #   draft_edition = create(:draft_edition, base_path:)
+  it "adds a request uuid to the message bus" do
+    draft_edition = create(:draft_edition, base_path:)
 
-  #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-  #     .with(hash_including(publishing_platform_request_id:), event_type: "minor")
+    expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+      .with(hash_including(publishing_platform_request_id:), event_type: "minor")
 
-  #   post(
-  #     "/content/#{draft_edition.document.content_id}/publish",
-  #     params: { update_type: "minor" }.to_json,
-  #     headers: { "HTTP_PUBLISHING_PLATFORM_REQUEST_ID" => "12345-67890" },
-  #   )
-  # end
+    post(
+      "/content/#{draft_edition.document.content_id}/publish",
+      params: { update_type: "minor" }.to_json,
+      headers: { "HTTP_PUBLISHING_PLATFORM_REQUEST_ID" => "12345-67890" },
+    )
+  end
 
   context "with Publishing-Platform-Dependency-Resolution-Source-Content-Id" do
     include DependencyResolutionHelper
