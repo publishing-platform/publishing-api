@@ -5,3 +5,5 @@
 - organisation
 - redirect
 - special_route
+- substitute # Not in the content store
+- vanish # Not in the content store

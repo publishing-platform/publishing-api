@@ -39,7 +39,7 @@ RSpec.describe DependencyResolutionJob, :perform do
     expect(DownstreamLiveJob).to receive(:perform_async).with(
       a_hash_including(
         "content_id",
-        # "message_queue_event_type" => "links", # TODO: uncomment when message queue implemented
+        "message_queue_event_type" => "links",
         "update_dependencies" => false,
       ),
     )

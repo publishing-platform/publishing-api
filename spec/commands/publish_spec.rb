@@ -250,15 +250,14 @@ RSpec.describe Commands::Publish do
       end
 
       it "unpublishes the edition which is in the way" do
-        # TODO: uncomment when message queue implemented
-        # expect(PublishingAPI.service(:queue_publisher)).to receive(:send_message).with(
-        #   hash_including(content_id: other_edition.content_id, document_type: "substitute"),
-        #   hash_including(event_type: "unpublish"),
-        # )
-        # expect(PublishingAPI.service(:queue_publisher)).to receive(:send_message).with(
-        #   hash_including(content_id: draft_item.content_id),
-        #   hash_including(event_type: "major"),
-        # )
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message).with(
+          hash_including(content_id: other_edition.content_id, document_type: "substitute"),
+          hash_including(event_type: "unpublish"),
+        )
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message).with(
+          hash_including(content_id: draft_item.content_id),
+          hash_including(event_type: "minor"),
+        )
 
         described_class.call(payload)
 

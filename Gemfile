@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem "rails", "8.0.2"
 
 gem "bootsnap", require: false
+gem "bunny"
 gem "jsonnet"
 gem "json-schema", require: false
 gem "oj"

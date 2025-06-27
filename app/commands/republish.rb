@@ -61,6 +61,7 @@ module Commands
 
       DownstreamLiveJob.perform_async(
         "content_id" => content_id,
+        "message_queue_event_type" => "republish",
         "update_dependencies" => true,
         "source_command" => "republish",
       )

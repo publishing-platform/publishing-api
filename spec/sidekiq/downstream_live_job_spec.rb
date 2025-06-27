@@ -10,7 +10,7 @@ RSpec.describe DownstreamLiveJob do
   let(:base_arguments) do
     {
       "content_id" => content_id,
-      # "message_queue_event_type" => "major", # TODO: uncomment when message queue implemented
+      "message_queue_event_type" => "major",
       "update_dependencies" => true,
     }
   end
@@ -104,21 +104,20 @@ RSpec.describe DownstreamLiveJob do
     end
   end
 
-  # TODO: uncomment when message queue implemented
-  # describe "broadcast to message queue" do
-  #   it "sends a message" do
-  #     expect(PublishingAPI.service(:queue_publisher)).to receive(:send_message)
+  describe "broadcast to message queue" do
+    it "sends a message" do
+      expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
 
-  #     subject.perform(arguments)
-  #   end
+      subject.perform(arguments)
+    end
 
-  #   it "uses the `message_queue_event_type`" do
-  #     expect(PublishingAPI.service(:queue_publisher)).to receive(:send_message)
-  #       .with(hash_including(update_type: "minor"), event_type: "minor")
+    it "uses the `message_queue_event_type`" do
+      expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+        .with(hash_including(update_type: "minor"), event_type: "minor")
 
-  #     subject.perform(arguments.merge("message_queue_event_type" => "minor"))
-  #   end
-  # end
+      subject.perform(arguments.merge("message_queue_event_type" => "minor"))
+    end
+  end
 
   describe "update dependencies" do
     context "can update dependencies" do

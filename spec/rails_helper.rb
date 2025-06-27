@@ -12,6 +12,7 @@ require "rspec/rails"
 require "webmock/rspec"
 WebMock.disable_net_connect!
 
+require "publishing_platform_schemas/rspec_matchers"
 require "sidekiq_unique_jobs/testing"
 
 # Sidekiq in test mode won't run server middleware by default.
@@ -77,6 +78,7 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  config.include PublishingPlatformSchemas::RSpecMatchers
   config.include RequestSpecHelpers, type: :request
 
   config.before(:each, type: :request) do

@@ -1178,19 +1178,18 @@ RSpec.describe "/content", type: :request do
         expect(response.status).to eq(200)
       end
 
-      # TODO: uncomment when message queue implemented
-      # it "doesn't send draft dependencies to the message queue" do
-      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
-      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
-      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-      #     .with(a_hash_including(base_path:), event_type: "major")
-      #   expect(PublishingAPI.service(:queue_publisher)).to_not receive(:send_message)
-      #     .with(a_hash_including(base_path: "/foo"), event_type: anything)
+      it "doesn't send draft dependencies to the message queue" do
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+          .with(a_hash_including(base_path:), event_type: "minor")
+        expect(PublishingApi.service(:queue_publisher)).to_not receive(:send_message)
+          .with(a_hash_including(base_path: "/foo"), event_type: anything)
 
-      #   post request_path, params: {}.to_json
+        post request_path, params: {}.to_json
 
-      #   expect(response.status).to eq(200)
-      # end
+        expect(response.status).to eq(200)
+      end
     end
 
     it "sends to the live content store" do
@@ -1486,17 +1485,16 @@ RSpec.describe "/content", type: :request do
         end
       end
 
-      # TODO: uncomment when message queue implemented
-      # it "sends to the message queue" do
-      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
-      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
-      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-      #     .with(a_hash_including(document_type: "answer"), event_type: "unpublish")
+      it "sends to the message queue" do
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+          .with(a_hash_including(document_type: "answer"), event_type: "unpublish")
 
-      #   post request_path, params: withdrawal_params
+        post request_path, params: withdrawal_params
 
-      #   expect(response.status).to eq(200)
-      # end
+        expect(response.status).to eq(200)
+      end
     end
 
     describe "redirecting" do
@@ -1575,23 +1573,22 @@ RSpec.describe "/content", type: :request do
           end
         end
 
-        # TODO: uncomment when message queue implemented
-        # it "sends to the message queue" do
-        #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
-        #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
-        #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-        #     .with(
-        #       a_hash_including(
-        #         document_type: "redirect",
-        #         redirects: [a_hash_including(destination: "/new-path")],
-        #       ),
-        #       event_type: "unpublish",
-        #     )
+        it "sends to the message queue" do
+          allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+          allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+          expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+            .with(
+              a_hash_including(
+                document_type: "redirect",
+                redirects: [a_hash_including(destination: "/new-path")],
+              ),
+              event_type: "unpublish",
+            )
 
-        #   post request_path, params: redirect_params
+          post request_path, params: redirect_params
 
-        #   expect(response.status).to eq(200)
-        # end
+          expect(response.status).to eq(200)
+        end
       end
 
       context "with a redirects hash payload" do
@@ -1670,24 +1667,23 @@ RSpec.describe "/content", type: :request do
         end
       end
 
-      # TODO: uncomment when message queue implemented
-      # it "sends to the message queue" do
-      #   allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
-      #   allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
-      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-      #     .with(
-      #       a_hash_including(
-      #         document_type: "gone",
-      #         content_id:,
-      #         details: a_hash_including(alternative_path: "/new-path"),
-      #       ),
-      #       event_type: "unpublish",
-      #     )
+      it "sends to the message queue" do
+        allow(PublishingApi.service(:live_content_store)).to receive(:put_content_item)
+        allow(PublishingApi.service(:draft_content_store)).to receive(:put_content_item)
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+          .with(
+            a_hash_including(
+              document_type: "gone",
+              content_id:,
+              details: a_hash_including(alternative_path: "/new-path"),
+            ),
+            event_type: "unpublish",
+          )
 
-      #   post request_path, params: gone_params
+        post request_path, params: gone_params
 
-      #   expect(response.status).to eq(200)
-      # end
+        expect(response.status).to eq(200)
+      end
     end
 
     describe "vanish (gone like it never existed)" do
@@ -1728,20 +1724,19 @@ RSpec.describe "/content", type: :request do
         end
       end
 
-      # TODO: uncomment when message queue implemented
-      # it "sends to the message queue" do
-      #   allow(PublishingApi.service(:live_content_store)).to receive(:delete_content_item)
-      #   allow(PublishingApi.service(:draft_content_store)).to receive(:delete_content_item)
-      #   expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
-      #     .with(
-      #       a_hash_including(document_type: "vanish"),
-      #       event_type: "unpublish",
-      #     )
+      it "sends to the message queue" do
+        allow(PublishingApi.service(:live_content_store)).to receive(:delete_content_item)
+        allow(PublishingApi.service(:draft_content_store)).to receive(:delete_content_item)
+        expect(PublishingApi.service(:queue_publisher)).to receive(:send_message)
+          .with(
+            a_hash_including(document_type: "vanish"),
+            event_type: "unpublish",
+          )
 
-      #   post request_path, params: vanish_params
+        post request_path, params: vanish_params
 
-      #   expect(response.status).to eq(200)
-      # end
+        expect(response.status).to eq(200)
+      end
     end
 
     describe "a bad unpublishing type" do

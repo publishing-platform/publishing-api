@@ -29,6 +29,14 @@ module Presenters
       present.except(:update_type).merge(payload_version:)
     end
 
+    def for_message_queue(payload_version)
+      present.merge(
+        publishing_platform_request_id: PublishingPlatformApi::PublishingPlatformHeaders.headers[:publishing_platform_request_id],
+        links: unexpanded_links,
+        payload_version:,
+      )
+    end
+
     def present
       edition.to_h
         .except(*NON_PRESENTED_PROPERTIES)
@@ -56,6 +64,11 @@ module Presenters
       return {} unless draft
 
       { auth_bypass_ids: edition.auth_bypass_ids || [] }
+    end
+
+    def unexpanded_links
+      links = ::Queries::LinksForEditionIds.new([edition.id]).merged_links
+      links[edition.id].symbolize_keys
     end
 
     def expanded_links_attributes

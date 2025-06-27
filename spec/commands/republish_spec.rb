@@ -39,7 +39,7 @@ RSpec.describe Commands::Republish do
         .to receive(:perform_async)
         .with(
           "content_id" => published_edition.content_id,
-          # "message_queue_event_type" => "republish", # TODO: uncomment when message queue implemented
+          "message_queue_event_type" => "republish",
           "update_dependencies" => true,
           "source_command" => "republish",
         )
