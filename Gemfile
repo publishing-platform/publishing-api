@@ -7,7 +7,7 @@ gem "bunny"
 gem "jsonnet"
 gem "json-schema", require: false
 gem "oj"
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.6"
 gem "publishing_platform_api_adapters"
 gem "publishing_platform_app_config"
 gem "publishing_platform_location"
