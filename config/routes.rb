@@ -8,6 +8,8 @@ Rails.application.routes.draw do
     put "/paths(/*base_path)", to: "path_reservations#reserve_path"
     delete "/paths(/*base_path)", to: "path_reservations#unreserve_path"
 
+    post "/lookup-by-base-path", to: "lookups#by_base_path"
+
     get "/content", to: "content_items#index"
     scope constraints: method(:content_id_constraint) do
       put "/content/:content_id", to: "content_items#put_content"
