@@ -3,19 +3,9 @@
   "type": "object",
   "required": [
     "base_path",
-    "content_id",
-    "description",
     "details",
     "document_type",
-    "expanded_links",
-    "first_published_at",
-    "links",
-    "payload_version",
-    "phase",
-    "public_updated_at",
     "publishing_app",
-    "publishing_platform_request_id",
-    "redirects",
     "rendering_app",
     "routes",
     "schema_name",
@@ -24,11 +14,18 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "auth_bypass_ids": {
+      "description": "A list of ids that will allow access to this item for non-authenticated users",
+      "$ref": "#/definitions/guid_list"
+    },
     "base_path": {
       "$ref": "#/definitions/absolute_path"
     },
-    "content_id": {
-      "$ref": "#/definitions/guid"
+    "change_note": {
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "description": {
       "$ref": "#/definitions/description_optional"
@@ -39,31 +36,17 @@
     "document_type": {
       "type": "string",
       "enum": [
-        "organisation"
+        "press_release",
+        "news_story"
       ]
-    },
-    "expanded_links": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "children": {
-          "description": "Link type automatically added by Publishing API",
-          "$ref": "#/definitions/frontend_links_with_base_path"
-        },
-        "parent": {
-          "description": "The parent content item.",
-          "$ref": "#/definitions/frontend_links_with_base_path",
-          "maxItems": 1
-        },
-        "primary_publishing_organisation": {
-          "description": "The organisation that published the page.",
-          "$ref": "#/definitions/frontend_links_with_base_path",
-          "maxItems": 1
-        }
-      }
     },
     "first_published_at": {
       "$ref": "#/definitions/first_published_at"
+    },
+    "last_edited_at": {
+      "description": "Last time when the content received a major or minor update.",
+      "type": "string",
+      "format": "date-time"
     },
     "links": {
       "type": "object",
@@ -81,9 +64,6 @@
         }
       }
     },
-    "payload_version": {
-      "$ref": "#/definitions/payload_version"
-    },
     "phase": {
       "description": "The service design phase of this content item",
       "type": "string",
@@ -93,17 +73,14 @@
         "live"
       ]
     },
+    "previous_version": {
+      "type": "string"
+    },
     "public_updated_at": {
       "$ref": "#/definitions/public_updated_at"
     },
     "publishing_app": {
       "$ref": "#/definitions/publishing_app_name"
-    },
-    "publishing_platform_request_id": {
-      "$ref": "#/definitions/publishing_platform_request_id"
-    },
-    "publishing_request_id": {
-      "$ref": "#/definitions/publishing_request_id"
     },
     "redirects": {
       "type": "array",
@@ -119,7 +96,7 @@
     "schema_name": {
       "type": "string",
       "enum": [
-        "organisation"
+        "news_article"
       ]
     },
     "title": {
@@ -127,9 +104,6 @@
     },
     "update_type": {
       "$ref": "#/definitions/update_type"
-    },
-    "withdrawn_notice": {
-      "$ref": "#/definitions/withdrawn_notice"
     }
   },
   "definitions": {
@@ -140,6 +114,14 @@
       "description": "A path only. Query string and/or fragment are not allowed.",
       "type": "string",
       "pattern": "^/(([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})+(/([a-zA-Z0-9._~!$&'()*+,;=:@-]|%[0-9a-fA-F]{2})*)*)?$"
+    },
+    "body_html_and_markdown": {
+      "description": "The main content provided as HTML with the markdown markdown it's rendered from",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/multiple_content_types"
+        }
+      ]
     },
     "change_history": {
       "type": "array",
@@ -174,32 +156,72 @@
     },
     "details": {
       "type": "object",
+      "required": [
+        "body"
+      ],
       "additionalProperties": false,
       "properties": {
-        "abbreviation": {
-          "description": "The organisation's abbreviation, if it has one.",
-          "type": [
-            "string",
-            "null"
-          ]
+        "attachments": {
+          "description": "An ordered list of asset links",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/file_attachment_asset"
+          }
+        },
+        "body": {
+          "$ref": "#/definitions/body_html_and_markdown"
         },
         "change_history": {
           "$ref": "#/definitions/change_history"
         },
-        "organisation_type": {
-          "description": "The type of organisation.",
+        "image": {
+          "$ref": "#/definitions/image_asset"
+        }
+      }
+    },
+    "file_attachment_asset": {
+      "type": "object",
+      "required": [
+        "attachment_type",
+        "content_type",
+        "id",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "accessible": {
+          "type": "boolean"
+        },
+        "alternative_format_contact_email": {
+          "type": "string"
+        },
+        "attachment_type": {
           "type": "string",
           "enum": [
-            "department",
-            "other"
+            "file"
           ]
         },
-        "status": {
+        "content_type": {
+          "type": "string"
+        },
+        "file_size": {
+          "type": "integer"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "number_of_pages": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
           "type": "string",
-          "enum": [
-            "closed",
-            "live"
-          ]
+          "format": "uri"
         }
       }
     },
@@ -207,56 +229,6 @@
       "description": "The date the content was first published.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
       "type": "string",
       "format": "date-time"
-    },
-    "frontend_links_with_base_path": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "base_path",
-          "content_id",
-          "title"
-        ],
-        "additionalProperties": true,
-        "properties": {
-          "api_path": {
-            "$ref": "#/definitions/absolute_path"
-          },
-          "base_path": {
-            "$ref": "#/definitions/absolute_path"
-          },
-          "content_id": {
-            "$ref": "#/definitions/guid"
-          },
-          "document_type": {
-            "type": "string"
-          },
-          "links": {
-            "type": "object",
-            "patternProperties": {
-              "^[a-z_]+$": {
-                "$ref": "#/definitions/frontend_links_with_base_path"
-              }
-            }
-          },
-          "public_updated_at": {
-            "oneOf": [
-              {
-                "$ref": "#/definitions/public_updated_at"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "schema_name": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          }
-        }
-      }
     },
     "guid": {
       "type": "string",
@@ -269,9 +241,71 @@
       },
       "uniqueItems": true
     },
-    "payload_version": {
-      "description": "Counter to indicate when the payload was generated",
-      "type": "integer"
+    "image_asset": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "credit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "high_resolution_url": {
+          "description": "URL to a high resolution version of the image, for use by third parties such as Twitter, Facebook or Slack. Used by the machine readable metadata component. Don't use this on user-facing web pages, as it might be very large.",
+          "type": "string",
+          "format": "uri"
+        },
+        "medium_resolution_url": {
+          "description": "URL to a medium resolution version of the image, for use by devices that have high pixel density such as iphone.",
+          "type": "string",
+          "format": "uri"
+        },
+        "url": {
+          "description": "URL to the image. The image should be in a suitable resolution for display on the page.",
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "multiple_content_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "content_type",
+          "content"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "content_type": {
+            "type": "string"
+          }
+        }
+      }
     },
     "public_updated_at": {
       "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
@@ -286,23 +320,6 @@
         "organisations-publisher",
         "publisher",
         "publishing-api"
-      ]
-    },
-    "publishing_platform_request_id": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "publishing_request_id": {
-      "description": "A unique identifier used to track publishing requests to rendered content",
-      "oneOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
       ]
     },
     "rendering_app": {
@@ -349,18 +366,6 @@
         "minor",
         "republish"
       ]
-    },
-    "withdrawn_notice": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "explanation": {
-          "type": "string"
-        },
-        "withdrawn_at": {
-          "format": "date-time"
-        }
-      }
     }
   }
 }
