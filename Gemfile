@@ -16,7 +16,7 @@ gem "publishing_platform_schemas"
 gem "publishing_platform_sidekiq"
 gem "publishing_platform_sso"
 gem "sentry-sidekiq"
-gem "sidekiq-unique-jobs", "< 8.0.12"
+gem "sidekiq-unique-jobs", "< 8.0.14"
 gem "tzinfo-data", platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 gem "with_advisory_lock"
 
