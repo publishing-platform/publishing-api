@@ -21,14 +21,7 @@ module Queries
 
     def call
       content_ids = dependency_resolution.dependencies
-      Document.joins(:editions)
-      .where(
-        content_id: content_ids,
-        editions: { content_store: content_stores },
-      )
-      .distinct
-      .order(:content_id)
-      .pluck(:content_id)
+      Queries::FindContentIdsOnStore.call(content_ids, content_stores)
     end
 
   private
