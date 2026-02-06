@@ -37,7 +37,7 @@ RSpec.describe RequeueContentByScope do
 
       editions.each do |edition|
         expect(RequeueContentJob).to have_received(:perform_async)
-          .with(edition.id, version.id, "reticulate.splines").once
+          .with("edition_id" => edition.id, "version" => version.id, "action" => "reticulate.splines").once
       end
       expect(RequeueContentJob).to have_received(:perform_async).exactly(3).times
     end
