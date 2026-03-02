@@ -165,7 +165,7 @@
           "description": "An ordered list of asset links",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/file_attachment_asset"
+            "$ref": "#/definitions/publication_attachment_asset"
           }
         },
         "body": {
@@ -181,52 +181,6 @@
             "type": "string"
           },
           "uniqueItems": true
-        }
-      }
-    },
-    "file_attachment_asset": {
-      "type": "object",
-      "required": [
-        "attachment_type",
-        "content_type",
-        "id",
-        "url"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "accessible": {
-          "type": "boolean"
-        },
-        "alternative_format_contact_email": {
-          "type": "string"
-        },
-        "attachment_type": {
-          "type": "string",
-          "enum": [
-            "file"
-          ]
-        },
-        "content_type": {
-          "type": "string"
-        },
-        "file_size": {
-          "type": "integer"
-        },
-        "filename": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "number_of_pages": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string",
-          "format": "uri"
         }
       }
     },
@@ -269,6 +223,128 @@
       "description": "When the content was last significantly changed (a major update). Shown to users.  Automatically determined by the publishing-api, unless overridden by the publishing application.",
       "type": "string",
       "format": "date-time"
+    },
+    "publication_attachment_asset": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "attachment_type",
+            "content_type",
+            "id",
+            "url"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "accessible": {
+              "type": "boolean"
+            },
+            "alternative_format_contact_email": {
+              "type": "string"
+            },
+            "attachment_type": {
+              "type": "string",
+              "enum": [
+                "file"
+              ]
+            },
+            "content_type": {
+              "type": "string"
+            },
+            "file_size": {
+              "type": "integer"
+            },
+            "filename": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "isbn": {
+              "type": "string"
+            },
+            "number_of_pages": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "unique_reference": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "attachment_type",
+            "id",
+            "url"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "attachment_type": {
+              "type": "string",
+              "enum": [
+                "html"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "isbn": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "unique_reference": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "attachment_type",
+            "id",
+            "url"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "attachment_type": {
+              "type": "string",
+              "enum": [
+                "external"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "isbn": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "unique_reference": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      ]
     },
     "publishing_app_name": {
       "description": "The application that published this item.",
