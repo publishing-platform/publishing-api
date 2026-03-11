@@ -1,0 +1,54 @@
+{
+  "base_path": "/news/modern-life-responsible-for-worrying-health-in-middle-aged",
+  "content_id": "55f26cf1-3b96-452c-a7d3-ee0b65db9d8b",
+  "description": "Helping middle age people live more healthily by asking ‘How are you?’ and providing free support and tools.",
+  "details": {
+    "attachments": [],
+    "body": "\u003Cp\u003EEight out of 10 of the middle aged either weigh too much, drink too much or don’t exercise enough.\u003C/p\u003E\n",
+    "change_history": [
+      {
+        "note": "First published.",
+        "public_timestamp": "2026-02-25T21:29:46.766+00:00"
+      }
+    ],
+    "image": {
+      "alt_text": "How are you billboard",
+      "url": "https://assets.dev.publishing-platform.co.uk/testing.jpg"
+    }
+  },
+  "document_type": "press_release",
+  "first_published_at": null,
+  "links": {
+    "primary_publishing_organisation": [
+      {
+        "api_path": "/api/content/organisations/digital-services",
+        "api_url": "http://draft-www.dev.publishing-platform.co.uk/api/content/organisations/digital-services",
+        "base_path": "/organisations/digital-services",
+        "content_id": "af07d5a5-df63-4ddc-9383-6a666845ebe9",
+        "details": {
+          "abbreviation": "DS",
+          "status": "live"
+        },
+        "document_type": "organisation",
+        "links": {
+
+        },
+        "schema_name": "organisation",
+        "title": "Digital Services",
+        "web_url": "http://draft-www.dev.publishing-platform.co.uk/organisations/digital-services",
+        "withdrawn": false
+      }
+    ]
+  },
+  "phase": "live",
+  "public_updated_at": "2026-02-25T21:29:46Z",
+  "publishing_app": "content-publisher",
+  "publishing_request_id": null,
+  "rendering_app": "frontend",
+  "schema_name": "news_article",
+  "title": "Modern life responsible for ‘worrying’ health in middle aged",
+  "updated_at": "2026-03-11T09:07:01Z",
+  "withdrawn_notice": {
+
+  }
+}
