@@ -156,7 +156,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.0203)
+    mime-types-data (3.2026.0331)
     mini_mime (1.1.5)
     mini_portile2 (2.8.7)
     minitest (6.0.2)
@@ -236,7 +236,7 @@ GEM
       rubocop-rspec (= 3.8.0)
     publishing_platform_schemas (0.4.1)
       json-schema (>= 2.8, < 6.1)
-    publishing_platform_sidekiq (0.5.0)
+    publishing_platform_sidekiq (0.6.0)
       publishing_platform_api_adapters
       redis-client (>= 0.22.2)
       sidekiq (~> 7.0, < 8)
@@ -251,7 +251,7 @@ GEM
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.5)
+    rack (3.2.6)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
