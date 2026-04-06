@@ -224,7 +224,7 @@ GEM
       sentry-rails (>= 5.3, < 7.0)
       sentry-ruby (~> 5.3)
     publishing_platform_location (0.4.1)
-    publishing_platform_markdown (0.3.0)
+    publishing_platform_markdown (0.3.1)
       kramdown (>= 2.3.1, < 2.5.2)
       sanitize (>= 6, < 8)
     publishing_platform_rubocop (0.2.6)
