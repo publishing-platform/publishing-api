@@ -170,7 +170,7 @@ GEM
       bigdecimal (>= 3.1, < 5)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.6.3)
+    net-imap (0.6.4)
       date
       net-protocol
     net-pop (0.1.2)
@@ -244,7 +244,7 @@ GEM
       publishing_platform_api_adapters (~> 0.10)
       redis-client (>= 0.22.2)
       sidekiq (~> 7.0, < 8)
-    publishing_platform_sso (0.6.1)
+    publishing_platform_sso (0.6.2)
       oauth2 (~> 2.0)
       omniauth (~> 2.1)
       omniauth-oauth2 (~> 1.8)
