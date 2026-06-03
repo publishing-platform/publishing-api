@@ -243,7 +243,7 @@ GEM
       rubocop-rspec (= 3.9.0)
     publishing_platform_schemas (0.5.3)
       json-schema (>= 2.8, < 6.3)
-    publishing_platform_sidekiq (0.6.3)
+    publishing_platform_sidekiq (0.6.4)
       publishing_platform_api_adapters (~> 0.10)
       redis-client (>= 0.22.2)
       sidekiq (~> 7.0, < 8)
