@@ -246,7 +246,7 @@ GEM
       publishing_platform_api_adapters (~> 0.10)
       redis-client (>= 0.22.2)
       sidekiq (~> 7.0, < 8)
-    publishing_platform_sso (0.6.9)
+    publishing_platform_sso (0.6.10)
       oauth2 (~> 2.0)
       omniauth (~> 2.1)
       omniauth-oauth2 (~> 1.8)
@@ -300,7 +300,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.4.2)
-    rbs (4.1.0)
+    rbs (4.1.2)
       logger
       prism (>= 1.6.0)
       tsort
@@ -409,7 +409,7 @@ GEM
     unicode-emoji (4.2.0)
     uri (1.1.1)
     useragent (0.16.11)
-    version_gem (1.1.14)
+    version_gem (1.1.15)
     warden (1.2.9)
       rack (>= 2.0.9)
     warden-oauth2 (0.0.1)
@@ -429,7 +429,7 @@ GEM
     with_advisory_lock (7.5.0)
       activerecord (>= 7.2)
       zeitwerk (>= 2.7)
-    zeitwerk (2.8.2)
+    zeitwerk (2.8.3)
 
 PLATFORMS
   x86_64-linux
