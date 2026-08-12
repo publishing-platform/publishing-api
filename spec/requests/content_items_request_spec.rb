@@ -336,6 +336,67 @@ RSpec.describe "/content", type: :request do
     end
   end
 
+  describe "GET /events" do
+    let!(:document) { create(:document, content_id:) }
+    let!(:edition) { create(:edition, document:) }
+
+    let!(:put_content_events) { create_list(:event, 3, content_id: document.content_id, action: "PutContent", created_at: Time.zone.now - 1.day) }
+    let!(:publish_events) { create_list(:event, 3, content_id: document.content_id, action: "Publish", created_at: Time.zone.now - 2.days) }
+    let!(:other_events) { create_list(:event, 3, created_at: Time.zone.now - 3.days) }
+
+    let(:request_path) { "/content/#{content_id}/events" }
+
+    it "returns all events for a content_id" do
+      get request_path
+
+      expect(response.status).to eq(200)
+      expect(parsed_response).to eq([put_content_events, publish_events].flatten.map(&:as_json))
+    end
+
+    it "returns all events for a content_id and action type" do
+      get request_path, params: { action: "Publish" }
+
+      expect(response.status).to eq(200)
+      expect(parsed_response).to eq(publish_events.flatten.map(&:as_json))
+    end
+
+    context "when filtering by datetime" do
+      let(:start_date) { Time.zone.now - 12.hours }
+      let(:end_date) { Time.zone.now - 2.hours }
+
+      let!(:new_put_content_events) { create_list(:event, 3, content_id: document.content_id, action: "PutContent", created_at: start_date + 2.hours) }
+      let!(:new_publish_events) { create_list(:event, 3, content_id: document.content_id, action: "Publish", created_at: start_date + 2.hours) }
+
+      it "returns all events for a content_id and start_date" do
+        new_events = [new_put_content_events, new_publish_events].flatten
+
+        get request_path, params: { from: start_date }
+
+        expect(response.status).to eq(200)
+        expect(parsed_response).to eq(new_events.map(&:as_json))
+      end
+
+      it "filters by action" do
+        get request_path, params: { from: start_date, action: "Publish" }
+
+        expect(response.status).to eq(200)
+        expect(parsed_response).to eq(new_publish_events.map(&:as_json))
+      end
+
+      it "filters by start and end date" do
+        create_list(:event, 3, content_id: document.content_id, action: "PutContent", created_at: end_date + 1.hour)
+        create_list(:event, 3, content_id: document.content_id, action: "Publish", created_at: end_date + 2.hours)
+
+        get request_path, params: { from: start_date, to: end_date }
+
+        expected_events = [new_put_content_events, new_publish_events].flatten
+
+        expect(response.status).to eq(200)
+        expect(parsed_response).to eq(expected_events.map(&:as_json))
+      end
+    end
+  end
+
   describe "GET /show" do
     context "for an existing edition" do
       let!(:document) { create(:document, content_id:) }
