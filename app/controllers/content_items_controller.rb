@@ -20,6 +20,15 @@ class ContentItemsController < ApplicationController
     ).call
   end
 
+  def events
+    render json: Queries::GetEvents.call(
+      content_id: path_params[:content_id],
+      action: query_params[:action],
+      from: query_params[:from],
+      to: query_params[:to],
+    )
+  end
+
   def show
     render json: Queries::GetContent.call(
       path_params[:content_id],
